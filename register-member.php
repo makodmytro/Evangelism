@@ -19,6 +19,8 @@ if (isset($_POST['submit'])) {
     $instagram = mysqli_real_escape_string($conn, $_POST['instagram']);
     $facebook = mysqli_real_escape_string($conn, $_POST['facebook']);
     $website = mysqli_real_escape_string($conn, $_POST['website']);
+
+    header("Location: home.php");
 }
 
 ?>

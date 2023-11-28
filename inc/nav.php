@@ -8,9 +8,14 @@
             <div class="dropdown-toggle fs-5 d-flex justify-content-center align-items-center" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fa fa-user-circle fs-3"></i>&nbsp;&nbsp;John
             </div>
-            <ul class="dropdown-menu start-auto width-fit-content ps-3 pe-3">
+            <ul class="dropdown-menu start-auto width-fit-content ps-3 pe-3 bg-primary">
                 <li>
-                    <a class="dropdown-item" href="logout.php">
+                    <a class="dropdown-item text-white mt-3" href="logout.php">
+                        <i class="fa fa-user-circle"></i>&nbsp;&nbsp;Edit Profile
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item text-white mt-3" href="logout.php">
                         <i class="fa fa-sign-out"></i>&nbsp;&nbsp;Log out
                     </a>
                 </li>
