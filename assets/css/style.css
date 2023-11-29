@@ -15,7 +15,6 @@
 body {
     width: 100%;
     height: 100vh;
-    /* overflow: hidden; */
     background-color: var(--gray);
     font-family: 'Poppins';
 }
@@ -40,21 +39,6 @@ input:active {
 .btn-primary:focus,
 .btn-primary:focus-visible,
 .btn-primary:active {
-    background-color: var(--secondary) !important;
-}
-
-.btn-secondary {
-    background-color: var(--primary);
-    border: none;
-    height: 40px;
-    font-size: 30px;
-    height: 80px;
-}
-
-.btn-secondary:hover,
-.btn-secondary:focus,
-.btn-secondary:focus-visible,
-.btn-secondary:active {
     background-color: var(--secondary) !important;
 }
 
@@ -98,6 +82,14 @@ input:active {
 .navbar .dropdown-menu a:focus {
     background-color: var(--primary) !important;
     color: white !important;
+}
+
+.top-container {
+    height: 70px !important;
+}
+
+.main-container {
+    min-height: calc(100% - 70px);
 }
 
 .modal .modal-header,

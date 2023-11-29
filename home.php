@@ -7,10 +7,10 @@
         <div class="d-flex justify-content-center flex-column gap-5 h-100">
             <div class="row">
                 <div class="col-md-4">
-                    <button class="btn btn-secondary w-100 mt-5 mb-5">Evangelism</button>
+                    <a href="./evangelise.php"><button class="btn btn-secondary w-100 mt-5 mb-5">Evangelize</button></a>
                 </div>
                 <div class="col-md-4">
-                    <button class="btn btn-secondary w-100 mt-5 mb-5">Add Convert</button>
+                    <a href="./add-convert.php"><button class="btn btn-secondary w-100 mt-5 mb-5">Add Convert</button></a>
                 </div>
                 <div class="col-md-4">
                     <button class="btn btn-secondary w-100 mt-5 mb-5">Search Members</button>

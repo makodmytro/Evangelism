@@ -5,6 +5,7 @@
         die();
     }
 
+    include 'inc/header.php';
     include 'db_conn.php';
     include 'functions.php';
 
@@ -48,9 +49,6 @@
         }
     }
 ?>
-
-
-<?php include 'inc/header.php' ?>
 
 <section class="container h-100">
     <div class="d-flex justify-content-center align-items-center h-100">
