@@ -5,7 +5,7 @@
     <?php include 'inc/top.php' ?>
     <div class="main-container pt-5">
         <div class="border border-1 border-solid pt-4 pb-4 position-relative">
-            <button class="btn btn-primary position-absolute" data-bs-toggle="modal" data-bs-target="#addFilterModal" style="top: -20px; left: 10px">Search Event</button>
+            <button class="btn btn-primary position-absolute" data-bs-toggle="modal" data-bs-target="#addFilterModal" style="top: -20px; left: 10px">Filters</button>
             <div class="mt-2 ms-5">Fullname:&nbsp;*Johnson&nbsp;&nbsp;&nbsp;Zip code: 9654</div>
             <div class="mt-3">
                 <div class="member-container bg-primary text-white">

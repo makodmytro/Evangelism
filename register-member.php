@@ -1,13 +1,18 @@
 <!-- register-member.php -->
 <?php
 session_start();
-
+if (isset($_SESSION['SESSION_EMAIL'])) {
+    header("Location: home.php");
+    die();
+}
 include 'db_conn.php';
 include 'functions.php';
 include 'inc/country.php';
 
 $msg = "";
 
+$res = select_userByEmail($conn, $_SESSION["SESSION_EMAIL"]);
+$user = mysqli_fetch_assoc($result);
 if (isset($_POST['submit'])) {
     $type = mysqli_real_escape_string($conn, $_POST['type']);
     $fullname = mysqli_real_escape_string($conn, $_POST['fullname']);
@@ -23,14 +28,14 @@ if (isset($_POST['submit'])) {
     $website = mysqli_real_escape_string($conn, $_POST['website']);
     
     try {
-        $res = registerMember($conn, $type, $fullname, $organization, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website);
+        $res = registerMember($conn, $row['usernr'], $type, $fullname, $organization, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website);
         if($res->$status == '200') {
             header("Location: home.php");
         } else {
             header("Location: register-member.php");
         }
     } catch (\Throwable $th) {
-        throw $th;
+        $msg = "Error: " . $th->getMessage();
     }
 }
 
@@ -58,7 +63,16 @@ if (isset($_POST['submit'])) {
                     <select type="text" class="form-control mt-3" name="type" style="padding: 12px" required>
                         <option value="" selected disabled>Select Your Type</option>
                         <option value="church">Church</option>
-                        <option value="evangalize">Evangalize</option>
+                        <option value="evangalist">Evangalist</option>
+                        <option value="muslim">Muslim</option>
+                        <option value="catholic">Catholic</option>
+                        <option value="hindu">Hindu</option>
+                        <option value="buddhist">Buddhist</option>
+                        <option value="jewisch">Jewisch</option>
+                        <option value="confucianism">Confucianism</option>
+                        <option value="jainism">Jainism</option>
+                        <option value="atheism">Atheism</option>
+                        <option value="mormonism">Mormonism</option>
                         <option value="newborn">Newborn</option>
                     </select>
                     <input type="text" class="form-control mt-3" name="fullname" placeholder="Enter Your Full Name" required>

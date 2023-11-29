@@ -64,6 +64,10 @@ input:active {
     background-color: var(--gray) !important;
 }
 
+.navbar {
+    z-index: 10;
+}
+
 .navbar .navbar-brand img {
     width: 100px;
 }
@@ -94,6 +98,10 @@ input:active {
 
 .main-container {
     min-height: calc(100% - 70px);
+}
+
+.modal-dialog {
+    z-index: 11;
 }
 
 .modal .modal-header,
@@ -136,4 +144,47 @@ input:active {
         flex-direction: column;
         width: 50%;
     }
+}
+
+.map-container {
+    display: flex;
+}
+
+.member-detail {
+    width: 370px;
+    background-color: var(--primary);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow-y: scroll;
+    height: calc(100vh - 150px);
+}
+
+.map-content {
+    width: calc(100% - 370px);
+    overflow: hidden;
+    height: calc(100vh - 150px);
+}
+
+@media screen and (max-width: 991px) {
+    .member-detail {
+        position: relative;
+        width: 100%;
+        margin-top: 40px;
+        margin-bottom: 40px;
+        height: auto;
+    }
+
+    .map-content {
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .map-container {
+        flex-direction: column;
+    }
+}
+
+.text-primary {
+    color: var(--primary) !important;
 }

@@ -119,7 +119,17 @@ include 'inc/nav.php';
                     <select type="text" class="form-control mt-3" name="type" style="padding: 12px" required>
                         <!-- <option value="" selected disabled>Select Your Type</option> -->
                         <option value="church" <?php echo ($row["type"] == 'church') ? 'selected' : ''; ?>>Church</option>
-                        <option value="evangalize" <?php echo ($row["type"] == 'evangalize') ? 'selected' : ''; ?>>Evangalize</option>
+                        <option value="evangalist" <?php echo ($row["type"] == 'evangalize') ? 'selected' : ''; ?>>Evangalize</option>
+                        <option value="muslim">Muslim</option>
+                        <option value="catholic">Catholic</option>
+                        <option value="hindu">Hindu</option>
+                        <option value="buddhist">Buddhist</option>
+                        <option value="jewisch">Jewisch</option>
+                        <option value="confucianism">Confucianism</option>
+                        <option value="jainism">Jainism</option>
+                        <option value="atheism">Atheism</option>
+                        <option value="mormonism">Mormonism</option>
+                        <option value="newborn">Newborn</option>
                         <option value="newborn" disabled>Newborn</option>
                     </select>
                     <input type="text" class="form-control mt-3" name="fullname" placeholder="Enter Your Full Name" value="<?= $row["fullname"] ?>">
