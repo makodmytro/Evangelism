@@ -103,4 +103,27 @@ function select_userByEmail($conn, $email){
     return mysqli_query($conn, $query);
 }
 
+function update_profile($conn, $type, $fullname, $email, $organization, $password, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $usernr){
+    $query = "UPDATE tb_users
+    JOIN tb_members ON tb_users.usernr = tb_members.usernr
+    SET 
+        tb_users.email = '{$email}',
+        tb_users.password = '{$password}',
+        tb_members.type = '{$type}',
+        tb_members.fullname = '{$fullname}',
+        tb_members.organization = '{$organization}',
+        tb_members.street = '{$street}',
+        tb_members.zip = '$zip',
+        tb_members.city = '$city',
+        tb_members.country = '$country',
+        tb_members.cellphone = '$cellphone',
+        tb_members.telephone = '$telephone',
+        tb_members.instagram = '$instagram',
+        tb_members.facebook = '$facebook',
+        tb_members.website = '{$website}'
+    WHERE 
+        tb_users.usernr = '{$usernr}'";
+    return mysqli_query($conn, $query);
+}
+
 ?>

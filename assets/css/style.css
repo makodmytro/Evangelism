@@ -60,6 +60,10 @@ input:active {
     background-color: var(--primary) !important;
 }
 
+.bg-gray {
+    background-color: var(--gray) !important;
+}
+
 .navbar .navbar-brand img {
     width: 100px;
 }
@@ -101,4 +105,35 @@ input:active {
 
 .modal .modal-footer {
     border: none;
+}
+
+.member-container {
+    display: flex;
+    gap: 15px;
+    padding-inline: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.member-info {
+    display: flex;
+    gap: 10px;
+    flex-direction: row;
+    align-items: center;
+}
+
+@media screen and (max-width: 768px) {
+    .member-image {
+        width: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .member-image img {
+        width: 75%;
+    }
+    .member-info {
+        flex-direction: column;
+        width: 50%;
+    }
 }

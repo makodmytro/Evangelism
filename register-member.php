@@ -1,6 +1,7 @@
 <!-- register-member.php -->
 <?php
 session_start();
+
 include 'db_conn.php';
 include 'functions.php';
 include 'inc/country.php';
@@ -15,11 +16,11 @@ if (isset($_POST['submit'])) {
     $zip = mysqli_real_escape_string($conn, $_POST['zip']);
     $city = mysqli_real_escape_string($conn, $_POST['city']);
     $country = mysqli_real_escape_string($conn, $_POST['country']);
-    $cellphone = mysqli_real_escape_string($conn, $_POST['cellphone']) | " ";
-    $telephone = mysqli_real_escape_string($conn, $_POST['telephone']) | " ";
-    $instagram = mysqli_real_escape_string($conn, $_POST['instagram']) | " ";
-    $facebook = mysqli_real_escape_string($conn, $_POST['facebook']) | " ";
-    $website = mysqli_real_escape_string($conn, $_POST['website']) | " ";
+    $cellphone = mysqli_real_escape_string($conn, $_POST['cellphone']);
+    $telephone = mysqli_real_escape_string($conn, $_POST['telephone']);
+    $instagram = mysqli_real_escape_string($conn, $_POST['instagram']);
+    $facebook = mysqli_real_escape_string($conn, $_POST['facebook']);
+    $website = mysqli_real_escape_string($conn, $_POST['website']);
     
     try {
         $res = registerMember($conn, $type, $fullname, $organization, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website);
@@ -41,6 +42,9 @@ if (isset($_POST['submit'])) {
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzjdJGgDHkwHNEugfq2z1G3o5c4RLggEg&libraries=places,routes,drawing&callback=initialize" async defer></script> -->
 
 <section class="container h-100">
+    <div>
+        <?= $_SESSION["SESSION_EMAIL"] ?>
+    </div>
     <div class="d-flex justify-content-center align-items-center h-100">
         <div class="d-flex gap-5" style="max-height: 75%">
             <div class="w-50 d-flex justify-content-center align-items-center bg-primary">

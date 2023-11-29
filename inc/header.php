@@ -14,6 +14,11 @@ define("DOMAINE","http://localhost/Evangelism-email-marketing--PHP");
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css" type="text/css" media="all" />
   <script src="assets/js/script.js"></script>
+  <style>
+    .btn-img {
+      width: 40px;
+    }
+  </style>
 </head>
 
 <body>

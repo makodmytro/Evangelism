@@ -1,7 +1,7 @@
 <nav class="navbar bg-primary text-white position-fixed w-100">
     <div class="w-100 ps-4 pe-4 d-flex justify-content-between align-items-center">
         <a class="navbar-brand" href="home.php">
-            <img src="<?= DOMAINE."/assets/images/logo.png" ?>" alt="">
+            <img src="assets/images/logo.png" alt="">
         </a>
         <h2 class="mb-0">Evangelism</h2>
         <div class="position-relative">
