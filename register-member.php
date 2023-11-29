@@ -29,7 +29,7 @@ if (isset($_POST['submit'])) {
     
     try {
         $res = registerMember($conn, $row['usernr'], $type, $fullname, $organization, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website);
-        if($res->$status == '200') {
+        if($res) {
             header("Location: home.php");
         } else {
             header("Location: register-member.php");

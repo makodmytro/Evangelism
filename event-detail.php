@@ -1,43 +1,23 @@
 <?php include 'inc/header.php' ?>
 <?php include 'inc/nav.php' ?>
-<?php
-    include 'functions.php';
-    include 'db_conn.php';
-
-    $msg = '';
-
-    if($_GET["usernr"]){
-        $usernr = $_GET['usernr'];
-    } else {
-        header("Location: search-members.php");
-    }
-    try {
-        $res = select_userById($conn, $usernr);
-        $user = mysqli_fetch_assoc($res);
-    } catch (\Throwable $th) {
-        $msg = "<div class='alert alert-danger'>{$th->getMessage()}</div>";
-    }
-    
-?>
 
 <section class="container h-100">
     <?php include 'inc/top.php' ?>
     <div class="main-container pt-5">
         <div class="map-container">
-            <?= $msg ?>
             <div class="border border-1 border-solid map-content">
                 <img src="assets/images/map.png" alt="" class="w-100">
             </div>
             <div class="member-detail pt-0 pb-3 text-white text-center">
                 <h2 class="mb-0 pt-3">Church</h2>
                 <hr>
-                <h3><?= $user['fullname'] ?></h3>
+                <h3>Will Johnson</h3>
                 <h3 class="fst-italic">Jesus Church</h3>
-                <h6><?= $user['street'] ?></h6>
-                <h6><?= $user['zip'] ?>, <?= $user['city'] ?></h6>
-                <h6><?= strtoupper($user['country']) ?></h6>
-                <h6><?= $user['cellphone'] ?></h6>
-                <h6><?= $user['telephone'] ?></h6>
+                <h6>Wegenstr 12</h6>
+                <h6>98653, Certerville</h6>
+                <h6>Deutschiand</h6>
+                <h6>+49 6598 65989</h6>
+                <h6>+49 6598 65989</h6>
                 <hr>
                 <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#emailModal">Email</button>
                 <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#whatsappModal">Whatsapp</button>
@@ -108,8 +88,8 @@
         </div>
     </div>
 
-    <div class="modal fade" id="memberModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+    <div class="modal fade modal-lg" id="memberModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
             <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Who is coming</h5>

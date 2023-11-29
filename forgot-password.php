@@ -12,7 +12,7 @@ if (isset($_SESSION['SESSION_EMAIL'])) {
 
 if (isset($_POST['submit'])) {
   $email = mysqli_real_escape_string($conn, $_POST['email']);
-  $code = md5(rand());
+  $code = md5(uniqid(rand(), true));
 
   if (mysqli_num_rows(mysqli_query($conn, "SELECT * FROM tb_users WHERE email='{$email}'")) > 0) {
     $query = mysqli_query($conn, "UPDATE tb_users SET rcode='{$code}' WHERE email='{$email}'");

@@ -32,7 +32,6 @@
             if (empty($user['code'])) {
                 $_SESSION['SESSION_EMAIL'] = $email;
                 if($user['usernr']) {
-                    echo $user['usernr'];
                     if(isUsernrExistsInMembers($conn, $user['usernr'])) {
                         header("Location: home.php");
                     } else {
