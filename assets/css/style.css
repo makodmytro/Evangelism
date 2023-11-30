@@ -188,3 +188,8 @@ input:active {
 .text-primary {
     color: var(--primary) !important;
 }
+
+input[type="checkbox"]:active,
+input[type="checkbox"]:focus {
+ height: 16px;
+}

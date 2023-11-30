@@ -25,16 +25,13 @@ if (isset($_POST['submit'])) {
 
     if ($cellphone || $telephone) {
 
-    } else if ($email) {
+    } else {
         if (isEmailExists($conn, $email)) {
             $msg = "<div class='alert alert-danger'>{$email} - This email address already exists.</div>";
         } else {
-            $res = addConvert($conn, $email, $fullname, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website);
+            $res = addConvert($conn, $email, $fullname, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $_SESSION["usernr"]);
         }
-    } else {
-
     }
-
 }
 
 ?>

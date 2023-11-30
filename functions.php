@@ -187,13 +187,32 @@ function delete_event($conn, $event_id)
 
 # Add Convert Page
 
-function addConvert($conn, $email, $fullname, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website){
+function addConvert($conn, $email, $fullname, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $usernr){
     $query = "INSERT INTO tb_users ( email ) VALUES ('{$email}')";
     mysqli_query($conn, $query);
     $insertId = $conn->insert_id;
     $query = "INSERT INTO tb_members (usernr, type, fullname, organization, street, zip, city, country, cellphone, telephone, instagram, facebook, website) VALUES ('{$insertId}', '', '{$fullname}', '', '{$street}', '{$zip}', '{$city}', '{$country}', '{$cellphone}', '{$telephone}', '{$instagram}', '{$facebook}', '{$website}')";
-    mysqli_query($conn, $query);
     
-    return false;
+
+
+    if($email != ""){
+        return mysqli_query($conn, $query);
+    } else {
+        date_default_timezone_set('UTC');
+        $currentDateTime = date('Y-m-d H:i:s');
+
+        $query = "INSERT INTO tb_connection (usernr1, usernr2, cdate, status) VALUES ('$usernr', '$insertId', '{$currentDateTime}', 'S')";
+        return mysqli_query($conn, $query);
+    }
 }
+
+function select_members( $conn ){
+    $query = "SELECT * FROM tb_users INNER JOIN tb_members ON tb_users.usernr = tb_members.usernr WHERE tb_users.active = '1'";
+    return mysqli_query($conn, $query);
+}
+
+function select_events($conn, $sname, $sorg, $szip, $scity, $scountry, $sstartDate, $sendDate){
+    $query = "SELECT * FROM tb_event INNER JOIN tb_members ON tb_event.usernr = tb_members.usernr INNER JOIN tb_users ON tb_event.usernr = tb_users.usernr WHERE tb_users.active = '1'";
+    return mysqli_query($conn, $query);
+}   
 ?>
