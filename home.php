@@ -6,11 +6,17 @@
     include 'db_conn.php';
     include 'functions.php';
 
+    $msg = "";
+
     if($_SESSION["SESSION_EMAIL"]){
-        $res = select_userByEmail($conn, $_SESSION["SESSION_EMAIL"]);
-        if($res){
-            $user = mysqli_fetch_assoc($res);
-            $_SESSION["usernr"] = $user["usernr"];
+        try {
+            $res = select_userByEmail($conn, $_SESSION["SESSION_EMAIL"]);
+            if($res){
+                $user = mysqli_fetch_assoc($res);
+                $_SESSION["usernr"] = $user["usernr"];
+            }
+        } catch (\Throwable $th) {
+            $msg = "<div class='alert alert-danger'>{$th->getMessage()}</div>";
         }
     }
 ?>
@@ -19,6 +25,7 @@
     <?php include 'inc/top.php' ?>
     <div class="main-container d-flex justify-content-center align-items-center">
         <div class="row w-100">
+            <?= $msg ?>
             <div class="col-md-4 col-sm-12">
                 <a href="evangelise.php">
                     <button class="btn btn-primary w-100 mt-5 mb-5 h-50"><img src="assets/images/logo.png" alt="" style="width: 50px">Evangelism</button>

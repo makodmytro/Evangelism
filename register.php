@@ -31,15 +31,15 @@ if (isset($_POST['submit'])) {
       $msg = "<div class='alert alert-danger'>{$email} - This email address already exists.</div>";
     } else {
       if ($password === $confirm_password) {
-        if (send_email($email, $code, 'verify')) {
+        // if (send_email($email, $code, 'verify')) {
           if (registerUser($conn, $name, $email, $password, $code)) {
             $msg = "<div class='alert alert-info'>We've sent a verification link to your email address.</div>";
           } else {
             $msg = "<div class='alert alert-danger'>Something went wrong during registration.</div>";
           }
-        } else {
-          $msg = "<div class='alert alert-danger'>Failed to send verification email.</div>";
-        }
+        // } else {
+        //   $msg = "<div class='alert alert-danger'>Failed to send verification email.</div>";
+        // }
       } else {
         $msg = "<div class='alert alert-danger'>Password and Confirm Password do not match</div>";
       }

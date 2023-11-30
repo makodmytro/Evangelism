@@ -5,6 +5,8 @@ use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 require 'vendor/autoload.php';
+
+define('DOMAIN', 'http://localhost/Evangelism-email-marketing--PHP');
 function isEmailVerified($conn, $verificationCode)
 {
     $query = "SELECT * FROM tb_users WHERE rcode='$verificationCode'";
@@ -45,17 +47,34 @@ function isUsernrExistsInMembers($conn, $usernr)
 
 function registerUser($conn, $name, $email, $password, $code)
 {
-    $hashedPassword = md5($password);
-    $sql = "INSERT INTO tb_users (email, password, rcode) VALUES ('{$email}', '{$hashedPassword}', '{$code}')";
-    return mysqli_query($conn, $sql);
+
+    $password = md5($password);
+    $sql = "INSERT INTO tb_users (email, password, rcode) VALUES ('{$email}', '{$password}', '{$code}')";
+    $res = mysqli_query($conn, $sql);
+    if ($res) {
+        $usernr = $conn->insert_id;
+
+        $query = "INSERT INTO tb_members (usernr,type, fullname, organization, street, zip, city, country, cellphone, telephone, instagram, facebook, website) VALUES ('{$usernr}', '', '{$name}', '', '','', '', '', '', '', '', '', '')";
+        return mysqli_query($conn, $query);
+    } else {
+        return false;
+    }
 }
 
 // function registerMember($conn, $usernr, $type, $fullname, $organization, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website)
-function registerMember($conn, $type, $fullname, $organization, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website)
+function registerMember($conn, $usernr, $type, $fullname, $organization, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website)
 {
-    // $query = "INSERT INTO tb_members (usernr, type, fullname, organization, street, zip, city, country, cellphone, telephone, instagram, facebook, website) VALUES ('{$usernr}', '{$type}', '{$fullname}', '{$organization}', '{$street}', '{$zip}', '{$city}', '{$country}', '{$cellphone}', '{$telephone}', '{$instagram}', '{$facebook}', '{$website}')";
-    $query = "INSERT INTO tb_members (type, fullname, organization, street, zip, city, country, cellphone, telephone, instagram, facebook, website) VALUES ('{$type}', '{$fullname}', '{$organization}', '{$street}', '{$zip}', '{$city}', '{$country}', '{$cellphone}', '{$telephone}', '{$instagram}', '{$facebook}', '{$website}')";
-    return mysqli_query($conn, $query);
+    $query = "INSERT INTO tb_members (usernr, type, fullname, organization, street, zip, city, country, cellphone, telephone, instagram, facebook, website) VALUES ('{$usernr}', '{$type}', '{$fullname}', '{$organization}', '{$street}', '{$zip}', '{$city}', '{$country}', '{$cellphone}', '{$telephone}', '{$instagram}', '{$facebook}', '{$website}')";
+    // $query = "INSERT INTO tb_members (type, fullname, organization, street, zip, city, country, cellphone, telephone, instagram, facebook, website) VALUES ('{$type}', '{$fullname}', '{$organization}', '{$street}', '{$zip}', '{$city}', '{$country}', '{$cellphone}', '{$telephone}', '{$instagram}', '{$facebook}', '{$website}')";
+    $res = mysqli_query($conn, $query);
+
+    if ($res) {
+        $query = "UPDATE tb_users SET active='1' WHERE usernr='$usernr'";
+
+        return mysqli_query($conn, $query);
+    } else {
+        return false;
+    }
 }
 
 function send_email($email, $code, $for)
@@ -85,8 +104,8 @@ function send_email($email, $code, $for)
                 . $code . '</a></b>';
         } else {
             $mail->Subject = 'Register verfiy';
-            $mail->Body = 'Here is the verification link <b><a href="http://localhost/?verification='
-                . $code . '">http://localhost/?verification='
+            $mail->Body = 'Here is the verification link <b><a href="' . DOMAIN . '/?verification='
+                . $code . '">' . DOMAIN . '/?verification='
                 . $code . '</a></b>';
         }
 
@@ -98,17 +117,26 @@ function send_email($email, $code, $for)
     }
 }
 
-function select_userByEmail($conn, $email){
+function select_oneuserByEmail($conn, $email)
+{
+    $query = "SELECT * FROM tb_users WHERE tb_users.email = '{$email}'";
+    return mysqli_query($conn, $query);
+}
+
+function select_userByEmail($conn, $email)
+{
     $query = "SELECT * FROM tb_users INNER JOIN tb_members ON tb_users.usernr = tb_members.usernr WHERE tb_users.email = '{$email}'";
     return mysqli_query($conn, $query);
 }
 
-function select_userById($conn, $id){
+function select_userById($conn, $id)
+{
     $query = "SELECT * FROM tb_users INNER JOIN tb_members ON tb_users.usernr = tb_members.usernr WHERE tb_users.usernr = '{$id}'";
     return mysqli_query($conn, $query);
 }
 
-function update_profile($conn, $type, $fullname, $email, $organization, $password, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $usernr){
+function update_profile($conn, $type, $fullname, $email, $organization, $password, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $usernr)
+{
     $query = "UPDATE tb_users
     JOIN tb_members ON tb_users.usernr = tb_members.usernr
     SET 
@@ -128,22 +156,44 @@ function update_profile($conn, $type, $fullname, $email, $organization, $passwor
         tb_members.website = '{$website}'
     WHERE 
         tb_users.usernr = '{$usernr}'";
-    return mysqli_query($conn, $query);
+    $res = mysqli_query($conn, $query);
+
+    if ($res) {
+        $query = "UPDATE tb_users SET active='1' WHERE usernr='$usernr'";
+        return mysqli_query($conn, $query);
+    } else {
+        return false;
+    }
 }
 
-function create_event($conn, $usernr, $name, $street, $zip, $city, $country, $dateofevent, $invitetxt, $radiuskm, $web){
+function create_event($conn, $usernr, $name, $street, $zip, $city, $country, $dateofevent, $invitetxt, $radiuskm, $web)
+{
     $query = "INSERT INTO tb_event (usernr, name, street, zip, city, country, dateofevent, invitetxt, radiuskm, web, sendout)
     VALUES ('{$usernr}', '{$name}', '{$street}', '{$zip}', '{$city}', '{$country}', '{$dateofevent}', '{$invitetxt}', '{$radiuskm}', '{$web}', 0);";
     return mysqli_query($conn, $query);
 }
 
-function read_event($conn, $event_id){
+function read_event($conn, $event_id)
+{
     $query = "";
     return mysqli_query($conn, $query);
 }
 
-function delete_event($conn, $event_id){
+function delete_event($conn, $event_id)
+{
     $query = "";
     return mysqli_query($conn, $query);
+}
+
+# Add Convert Page
+
+function addConvert($conn, $email, $fullname, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website){
+    $query = "INSERT INTO tb_users ( email ) VALUES ('{$email}')";
+    mysqli_query($conn, $query);
+    $insertId = $conn->insert_id;
+    $query = "INSERT INTO tb_members (usernr, type, fullname, organization, street, zip, city, country, cellphone, telephone, instagram, facebook, website) VALUES ('{$insertId}', '', '{$fullname}', '', '{$street}', '{$zip}', '{$city}', '{$country}', '{$cellphone}', '{$telephone}', '{$instagram}', '{$facebook}', '{$website}')";
+    mysqli_query($conn, $query);
+    
+    return false;
 }
 ?>

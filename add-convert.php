@@ -23,11 +23,18 @@ if (isset($_POST['submit'])) {
     $website = mysqli_real_escape_string($conn, $_POST['website']);
     $organization = "";
 
-    try {
-        $res = registerMember($conn, $type, $fullname, $organization, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website);
-    } catch (\Throwable $th) {
-        $msg = '<div class="alert alert-danger">' . $th->getMessage() . '</div>';
+    if ($cellphone || $telephone) {
+
+    } else if ($email) {
+        if (isEmailExists($conn, $email)) {
+            $msg = "<div class='alert alert-danger'>{$email} - This email address already exists.</div>";
+        } else {
+            $res = addConvert($conn, $email, $fullname, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website);
+        }
+    } else {
+
     }
+
 }
 
 ?>
@@ -105,11 +112,11 @@ if (isset($_POST['submit'])) {
         <button id="handleaddConvertModal" data-bs-toggle="modal" data-bs-target="#exampleModal"
             style="opacity: 0; height: 0px !important">Register</button>
         <script>
-            <?php 
+            <?php
             if ($res == true) {
                 echo "document.getElementById('handleaddConvertModal').click()";
                 $res = false;
-            }   
+            }
             ?>
         </script>
     </div>

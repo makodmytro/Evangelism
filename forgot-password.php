@@ -47,7 +47,7 @@ if (isset($_POST['submit'])) {
                     <button name="submit" class="btn btn-primary mt-5 w-100" type="submit">Send Reset Link</button>
                 </form>
                 <p class="mt-3 text-center">Back to!&nbsp;&nbsp;&nbsp;<a href="index.php">Login</a>.</p>
-            </div>
+            </div> 
         </div>
     </div>
 </section>
