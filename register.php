@@ -6,6 +6,9 @@ include 'functions.php';
 
 $msg = "";
 
+$res_legal_text = select_policyByLang($conn, "english");
+$legal_text = mysqli_fetch_assoc($res_legal_text);
+
 if (isset($_SESSION['SESSION_EMAIL'])) {
   header("Location: home.php");
   die();
@@ -34,6 +37,7 @@ if (isset($_POST['submit'])) {
         // if (send_email($email, $code, 'verify')) {
           if (registerUser($conn, $name, $email, $password, $code)) {
             $msg = "<div class='alert alert-info'>We've sent a verification link to your email address.</div>";
+            $_SESSION['usernr'] = $conn->insert_id;
           } else {
             $msg = "<div class='alert alert-danger'>Something went wrong during registration.</div>";
           }
@@ -68,6 +72,16 @@ if (isset($_POST['submit'])) {
                     <input type="password" class="form-control mt-3" name="password" placeholder="Enter Your Password" required>
                     <input type="password" class="form-control mt-3" name="confirm-password"
                         placeholder="Enter Your Confirm Password" required>
+                        <div class="form-check mt-5">
+                        <input class="form-check-input" type="checkbox" name="policy" value="" id="flexCheckDefault"
+                            required>
+                        <label class="form-check-label" for="flexCheckDefault">
+                            I agree
+                        </label>
+                    </div>
+                    <div>
+                        <?= $legal_text["legal_text"] ?>
+                    </div>
                     <button name="submit" class="btn btn-primary mt-5 w-100" type="submit">Register</button>
                 </form>
                 <p class="mt-3 text-center">Have an account!&nbsp;&nbsp;&nbsp;<a href="index.php">Login</a>.</p>

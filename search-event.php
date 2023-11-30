@@ -1,9 +1,14 @@
 <?php include 'inc/header.php' ?>
+<?php $navTitle = "Search Events"; ?>
 <?php include 'inc/nav.php' ?>
 <?php
 include 'db_conn.php';
 include 'functions.php';
 include 'inc/country.php';
+session_start();
+if(!isset($_SESSION["SESSION_EMAIL"])){
+    header("Location: index.php");
+}
 
 $msg = "";
 $search_name = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
@@ -59,7 +64,7 @@ try {
                         </div>
                     </div>
                 <?php } ?>
-                <div class="member-container bg-primary text-white">
+                <!-- <div class="member-container bg-primary text-white">
                     <div class="member-image"><img src="assets/images/member.png" alt=""></div>
                     <div class="member-info">
                         <div>Will Johnson</div>
@@ -88,7 +93,7 @@ try {
                         <div>Deutschiand</div>
                         <div>09685356478</div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
 

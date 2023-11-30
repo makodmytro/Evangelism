@@ -3,7 +3,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "hopeforevangelism";
+$dbname = "hopeforevangelism_com";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 

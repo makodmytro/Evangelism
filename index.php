@@ -38,7 +38,7 @@
                         header('Location: register-member.php');
                     }
                 } else {
-                    $msg = "<div class='alert alert-info'>Something went wrong.</div>";
+                    $msg = "<div class='alert alert-warning'>Something went wrong.</div>";
                 }
             } else {
                 $msg = "<div class='alert alert-info'>First verify your account and try again.</div>";

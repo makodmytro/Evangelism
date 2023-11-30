@@ -1,9 +1,13 @@
 <?php include 'inc/header.php' ?>
+<?php $navTitle = "Member Details"; ?>
 <?php include 'inc/nav.php' ?>
 <?php
     include 'functions.php';
     include 'db_conn.php';
-
+    session_start();
+    if(!isset($_SESSION["SESSION_EMAIL"])){
+        header("Location: index.php");
+    }
     $msg = '';
 
     if($_GET["usernr"]){

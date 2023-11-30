@@ -1,11 +1,15 @@
 <?php include 'inc/header.php' ?>
+<?php $navTitle = "Main Menu"; ?>
 <?php include 'inc/nav.php' ?>
 
 <?php
-    session_start();
     include 'db_conn.php';
     include 'functions.php';
-
+    session_start();
+    if(!isset($_SESSION["SESSION_EMAIL"])){
+        header("Location: index.php");
+    }
+    
     $msg = "";
 
     if($_SESSION["SESSION_EMAIL"]){

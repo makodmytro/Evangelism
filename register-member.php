@@ -1,10 +1,6 @@
-<!-- register-member.php -->
 <?php
 session_start();
-if (!isset($_SESSION['SESSION_EMAIL'])) {
-    header("Location: index.php");
-    die();
-}
+
 include 'db_conn.php';
 include 'functions.php';
 include 'inc/country.php';
@@ -12,112 +8,140 @@ include 'inc/country.php';
 $msg = "";
 
 try {
-    $res = select_oneuserByEmail($conn, $_SESSION["SESSION_EMAIL"]);
-    $user = mysqli_fetch_assoc($res);
-    try {
-        $res = select_userById($conn, $user["usernr"]);
-        $user = mysqli_fetch_assoc($res);
-    } catch (\Throwable $th) {
-        $msg = "<div class='alert alert-danger'>{$th->getMessage()}</div>";
-    }
-    if (isset($_POST['submit'])) {
-        $type = mysqli_real_escape_string($conn, $_POST['type']);
-        $fullname = mysqli_real_escape_string($conn, $_POST['fullname']);
-        $organization = mysqli_real_escape_string($conn, $_POST['organization']);
-        $street = mysqli_real_escape_string($conn, $_POST['street']);
-        $zip = mysqli_real_escape_string($conn, $_POST['zip']);
-        $city = mysqli_real_escape_string($conn, $_POST['city']);
-        $country = mysqli_real_escape_string($conn, $_POST['country']);
-        $cellphone = mysqli_real_escape_string($conn, $_POST['cellphone']);
-        $telephone = mysqli_real_escape_string($conn, $_POST['telephone']);
-        $instagram = mysqli_real_escape_string($conn, $_POST['instagram']);
-        $facebook = mysqli_real_escape_string($conn, $_POST['facebook']);
-        $website = mysqli_real_escape_string($conn, $_POST['website']);
-
-        
-        try {
-            $res = update_profile($conn, $type, $fullname, $user["email"], $organization, $user["password"], $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $user["usernr"]);
-            if($res) {
-                header("Location: home.php");
-            } else {
-                header("Location: register-member.php");
-            }
-        } catch (\Throwable $th) {
-            $msg = "Error: " . $th->getMessage();
-        }
-    }
+    $types = select_types($conn);
 } catch (\Throwable $th) {
-    $msg = "<div class='alert alert-danger'>" . $th->getMessage() ."</div>";
+    //throw $th;
+    $msg = "<div class='alert alert-danger'>'{$th->getMessage()}'</div>";
 }
 
+$result = select_userByEmail($conn, $_SESSION["SESSION_EMAIL"]);
+
+if (mysqli_num_rows($result) > 0) {
+    $row = mysqli_fetch_assoc($result);
+} else {
+    echo "0 results";
+}
+
+if (isset($_POST['submit'])) {
+    $type = mysqli_real_escape_string($conn, $_POST['type']);
+    $fullname = mysqli_real_escape_string($conn, $_POST['fullname']);
+    $organization = mysqli_real_escape_string($conn, $_POST['organization']);
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $street = mysqli_real_escape_string($conn, $_POST['street']);
+    $zip = mysqli_real_escape_string($conn, $_POST['zip']);
+    $city = mysqli_real_escape_string($conn, $_POST['city']);
+    $country = mysqli_real_escape_string($conn, $_POST['country']);
+    $cellphone = mysqli_real_escape_string($conn, $_POST['cellphone']);
+    $telephone = mysqli_real_escape_string($conn, $_POST['telephone']);
+    $instagram = mysqli_real_escape_string($conn, $_POST['instagram']);
+    $facebook = mysqli_real_escape_string($conn, $_POST['facebook']);
+    $website = mysqli_real_escape_string($conn, $_POST['website']);
+    $password = mysqli_real_escape_string($conn, $_POST['password']);
+    $confirm_password = mysqli_real_escape_string($conn, $_POST['confirm_password']);
+
+      // Validate password strength
+    if($password === ''){
+        $password = $row["password"];
+        try {
+            $res = update_profile($conn, $type, $fullname, $email, $organization, $password, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $row["usernr"]);
+            
+            header("Location: home.php");
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    } else {
+        $uppercase = preg_match('@[A-Z]@', $password);
+        $lowercase = preg_match('@[a-z]@', $password);
+        $number = preg_match('@[0-9]@', $password);
+        $specialChars = preg_match('@[^\w]@', $password);
+    
+        if (!$uppercase || !$lowercase || !$number || !$specialChars || strlen($password) < 8) {
+            $msg = "<div class='alert alert-danger'>Password should be at least 8 characters in length and should include at least one upper case letter, one number, and one special character.</div>";
+        } else {
+            if (isEmailExists($conn, $email)) {
+                if($email !== $row["email"]) {
+                    $msg = "<div class='alert alert-danger'>{$email} - This email address already exists.</div>";
+                } else {
+                    $msg = "";
+                    try {
+                        $res = update_profile($conn, $type, $fullname, $email, $organization, $password, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $row["usernr"]);
+                        
+                        header("Location: home.php");
+                    } catch (\Throwable $th) {
+                        throw $th;
+                    }
+                }
+            } else {
+                if ($password === $confirm_password) {
+                    try {
+                        $res = update_profile($conn, $type, $fullname, $email, $organization, $password, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $row["usernr"]);
+                        
+                        header("Location: home.php");
+                    } catch (\Throwable $th) {
+                        throw $th;
+                    }
+                } else {
+                    $msg = "<div class='alert alert-danger'>Password and Confirm Password do not match</div>";
+                }
+            }
+        }
+    }
+
+    
+}
 ?>
 
-<?php include 'inc/header.php' ?>
-<!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD7qN-YI4B690-nEs3bus5EhE5DErQ4EAA&libraries=places,routes,drawing,geometry&callback=initialize" async defer></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBKXDHnZU6Xwq263kX2zwV0V9tPzAXmplQ&libraries=places,routes,drawing&callback=initialize" async defer></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzjdJGgDHkwHNEugfq2z1G3o5c4RLggEg&libraries=places,routes,drawing&callback=initialize" async defer></script> -->
-
+<?php
+include 'inc/header.php';
+include 'inc/nav.php';
+?>
 <section class="container h-100">
-    <?php echo $msg; ?>
-    <div class="d-flex justify-content-center align-items-center h-100">
-        <div class="d-flex gap-5" style="max-height: 75%">
-            <div class="w-50 d-flex justify-content-center align-items-center bg-primary">
-                <img src="assets/images/logo.png" alt="" class="w-75">
-            </div>
-            <div class="w-50 pt-3 pb-3 overflow-auto pe-2">
-                <h2>Complete your profile</h2>
-                <p class="mt-3 mb-3">Please fill these fields.. </p>
-                <form action="" method="post">
-                    <select type="text" class="form-control mt-3" name="type" style="padding: 12px" required>
-                        <option value="" selected disabled>Select Your Type</option>
-                        <option value="church">Church</option>
-                        <option value="evangalist">Evangalist</option>
-                        <option value="muslim">Muslim</option>
-                        <option value="catholic">Catholic</option>
-                        <option value="hindu">Hindu</option>
-                        <option value="buddhist">Buddhist</option>
-                        <option value="jewisch">Jewisch</option>
-                        <option value="confucianism">Confucianism</option>
-                        <option value="jainism">Jainism</option>
-                        <option value="atheism">Atheism</option>
-                        <option value="mormonism">Mormonism</option>
-                        <option value="newborn">Newborn</option>
-                    </select>
-                    <input type="text" class="form-control mt-3" name="fullname" placeholder="Enter Your Full Name" value="<?= $user["fullname"] ?>" required>
-                    <input type="text" class="form-control mt-3" name="organization" placeholder="Enter Your Organization" required>
-                    <input type="text" class="form-control mt-3" name="street" placeholder="Enter Your Street" required>
-                    <input type="text" class="form-control mt-3" name="zip" placeholder="Enter Your Zip" required>
-                    <input type="text" class="form-control mt-3" name="city" placeholder="Enter Your City" required>
-                    <select type="text" class="form-control mt-3" name="country" onchange="handle_changeCountry(event)" style="padding: 12px;" required>
+    <?php include 'inc/top.php' ?>
+    <div class="main-container">
+        <?php echo $msg; ?>
+        <?php echo $_SESSION["SESSION_EMAIL"] ?>
+        <form action="" method="post">
+            <div class="row w-100 mt-5 ms-0">
+                <div class="col-lg-7 col-md-12 border border-1 border-solid px-5 pt-3 pb-3 mb-5">
+                    <input type="text" class="form-control mt-3" name="street" placeholder="Enter Your Street" value="<?= $row["street"] ?>">
+                    <div class="d-flex gap-3">
+                        <input type="text" class="form-control mt-3" name="zip" placeholder="* Enter Your Zip" value="<?= $row["zip"] ?>" required>
+                        <input type="text" class="form-control mt-3" name="city" placeholder="* Enter Your City" value="<?= $row["city"] ?>"
+                            required>
+                    </div>
+                    <select type="text" class="form-control mt-3" name="country" onchange="handle_changeCountry(event)" value="<?= $row["country"] ?>"
+                        style="padding: 12px;" required>
                         <option value="" disabled selected>Select Your Country</option>
                         <?php foreach ($countryNames as $countryName) { ?>
-                            <option value="<?= $countryName ?>"><?= strtoupper(str_replace("_", " ", $countryName)) ?></option>
+                            <option value="<?= $countryName ?>" <?php echo ($row["country"] == $countryName) ? 'selected' : ''; ?>>
+                                <?= strtoupper(str_replace("_", " ", $countryName)) ?>
+                            </option>
                         <?php } ?>
                     </select>
-                    <!-- <div class="custom-select w-100">
-                        <div class="select-styled form-control mt-3">
-                            Select Your Country
-                        </div>
-                        <ul class="select-options">
-                            <li><img src="path/to/image" alt="Option 1"> Iraq</li>
-                        </ul>
-                    </div> -->
-                    <input type="text" class="form-control mt-3" name="cellphone" placeholder="Enter Your Cellphone">
-                    <input type="text" class="form-control mt-3" name="telephone" placeholder="Enter Your Telephone">
-                    <input type="text" class="form-control mt-3" name="instagram" placeholder="Enter Your Instagram">
-                    <input type="text" class="form-control mt-3" name="facebook" placeholder="Enter Your Facebook">
-                    <input type="text" class="form-control mt-3" name="website" placeholder="Enter Your Website">
-                    <button name="submit" class="btn btn-primary mt-5 w-100" type="submit">Register</button>
-                </form>
-                <p class="mt-3 text-center">Have an account!&nbsp;&nbsp;&nbsp;<a href="index.php">Login</a>.</p>
+                    <input type="text" class="form-control mt-3" name="cellphone" placeholder="Enter Your Cellphone" value="<?= $row["cellphone"] ?>">
+                    <input type="text" class="form-control mt-3" name="website" placeholder="Enter Your Website" value="<?= $row["website"] ?>">
+                    <input type="text" class="form-control mt-3" name="telephone" placeholder="Enter Your Telephone" value="<?= $row["telephone"] ?>">
+                    <input type="text" class="form-control mt-3" name="instagram" placeholder="Enter Your Instagram" value="<?= $row["instagram"] ?>">
+                    <input type="text" class="form-control mt-3" name="facebook" placeholder="Enter Your Facebook" value="<?= $row["facebook"] ?>">
+                </div>
+                <div class="col-lg-1 col-md-12"></div>
+                <div class="col-lg-4 col-md-12 border border-1 border-solid px-4 pt-3 pb-3 mb-5 text-break">
+                    <select type="text" class="form-control mt-3" name="type" style="padding: 12px" required>
+                    <?php while($row1 = $types->fetch_assoc()) { ?>
+                        <option value="church" <?php echo ($row1["type"] == 'Church') ? 'selected' : ''; ?>><?= $row1["descript"] ?> (<?= strtoupper($row1["langu"]) ?>)</option>
+                    <?php } ?>
+                    </select>
+                    <input type="text" class="form-control mt-3" name="fullname" placeholder="Enter Your Full Name" value="<?= $row["fullname"] ?>">
+                    <input type="text" class="form-control mt-3" name="email" placeholder="Enter Your Email Address" value="<?= $row["email"] ?>">
+                    <input type="text" class="form-control mt-3" name="organization" placeholder="Enter Your Organization" value="<?= $row["organization"] ?>">
+                    <input type="password" class="form-control mt-3" name="password" placeholder="Enter Your Password">
+                    <input type="password" class="form-control mt-3" name="confirm_password"
+                        placeholder="Enter Your Retype Password">
+                    <button name="submit" class="btn btn-primary mt-5 w-100" type="submit">Seve Data</button>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 </section>
 
-<script>
-    function handle_changeCountry(event) {
-        console.log(event.target.value)
-    }   
-</script>
 <?php include 'inc/footer.php' ?>

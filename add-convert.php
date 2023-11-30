@@ -1,4 +1,5 @@
 <?php include 'inc/header.php' ?>
+<?php $navTitle = "Add Convert"; ?>
 <?php include 'inc/nav.php' ?>
 
 <?php

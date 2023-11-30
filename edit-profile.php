@@ -1,9 +1,15 @@
 <?php
 session_start();
+if(!isset($_SESSION["SESSION_EMAIL"])){
+    header("Location: index.php");
+}
+
 
 include 'db_conn.php';
 include 'functions.php';
 include 'inc/country.php';
+
+$msg = '';
 
 $result = select_userByEmail($conn, $_SESSION["SESSION_EMAIL"]);
 
@@ -11,6 +17,13 @@ if (mysqli_num_rows($result) > 0) {
     $row = mysqli_fetch_assoc($result);
 } else {
     echo "0 results";
+}
+
+try {
+    $types = select_types($conn);
+} catch (\Throwable $th) {
+    //throw $th;
+    $msg = "<div class='alert alert-danger'>'{$th->getMessage()}'</div>";
 }
 
 if (isset($_POST['submit'])) {
@@ -117,20 +130,9 @@ include 'inc/nav.php';
                 <div class="col-lg-1 col-md-12"></div>
                 <div class="col-lg-4 col-md-12 border border-1 border-solid px-4 pt-3 pb-3 mb-5 text-break">
                     <select type="text" class="form-control mt-3" name="type" style="padding: 12px" required>
-                        <!-- <option value="" selected disabled>Select Your Type</option> -->
-                        <option value="church" <?php echo ($row["type"] == 'church') ? 'selected' : ''; ?>>Church</option>
-                        <option value="evangalist" <?php echo ($row["type"] == 'evangalize') ? 'selected' : ''; ?>>Evangalize</option>
-                        <option value="muslim">Muslim</option>
-                        <option value="catholic">Catholic</option>
-                        <option value="hindu">Hindu</option>
-                        <option value="buddhist">Buddhist</option>
-                        <option value="jewisch">Jewisch</option>
-                        <option value="confucianism">Confucianism</option>
-                        <option value="jainism">Jainism</option>
-                        <option value="atheism">Atheism</option>
-                        <option value="mormonism">Mormonism</option>
-                        <option value="newborn">Newborn</option>
-                        <option value="newborn" disabled>Newborn</option>
+                    <?php while($row1 = $types->fetch_assoc()) { ?>
+                        <option value="church" <?php echo ($row1["type"] == 'Church') ? 'selected' : ''; ?>><?= $row1["descript"] ?> (<?= strtoupper($row1["langu"]) ?>)</option>
+                    <?php } ?>
                     </select>
                     <input type="text" class="form-control mt-3" name="fullname" placeholder="Enter Your Full Name" value="<?= $row["fullname"] ?>">
                     <input type="text" class="form-control mt-3" name="email" placeholder="Enter Your Email Address" value="<?= $row["email"] ?>">

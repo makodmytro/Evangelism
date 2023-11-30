@@ -1,5 +1,12 @@
 <?php include 'inc/header.php' ?>
+<?php $navTitle = "Evangelize"; ?>
 <?php include 'inc/nav.php' ?>
+<?php
+    session_start();
+    if(!isset($_SESSION["SESSION_EMAIL"])){
+        header("Location: index.php");
+    }
+?>
 
 <section class="container h-100">
     <?php include 'inc/top.php' ?>

@@ -1,4 +1,5 @@
 <?php include 'inc/header.php' ?>
+<?php $navTitle = "Event Details"; ?>
 <?php include 'inc/nav.php' ?>
 
 <section class="container h-100">
@@ -21,15 +22,19 @@
                 <hr>
                 <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#emailModal">Email</button>
                 <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#whatsappModal">Whatsapp</button>
-                <button class="btn btn-default mx-auto w-75 mt-1 mb-1">Events</button>
-                <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#allowModal">Connect</button>
-                <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#memberModal">Activate</button>
+                <button class="btn btn-default mx-auto w-75 mt-1 mb-1" onclick="gotoEvent()">Events</button>
+                <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#allowModal">Add me</button>
+                <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#memberModal">Who is comming</button>
+                <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#memberModal">Details</button>
                 <div class="d-flex justify-content-between w-75 mx-auto">
                     <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
                         <img src="assets/images/world.png" alt="" style="width: 30px">
                     </button>
                     <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
                         <img src="assets/images/facebook.png" alt="" style="width: 30px">
+                    </button>
+                    <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
+                        <img src="assets/images/instagram.png" alt="" style="width: 30px">
                     </button>
                     <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
                         <img src="assets/images/instagram.png" alt="" style="width: 30px">
@@ -88,8 +93,8 @@
         </div>
     </div>
 
-    <div class="modal fade modal-lg" id="memberModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+    <div class="modal fade" id="memberModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Who is coming</h5>
@@ -133,5 +138,10 @@
     </div>
 
 </section>
+<script>
+    function gotoEvent() {
+        window.location.href = "<?= DOMAIN ?>/searth-event.php"
+    }
+</script>
 
 <?php include 'inc/footer.php' ?>

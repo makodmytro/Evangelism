@@ -3,7 +3,7 @@
         <a class="navbar-brand" href="home.php">
             <img src="assets/images/logo.png" alt="">
         </a>
-        <h2 class="mb-0">Evangelism</h2>
+        <h2 class="mb-0"><?= $navTitle ?></h2>
         <div class="position-relative">
             <div class="dropdown-toggle fs-5 d-flex justify-content-center align-items-center" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fa fa-user-circle fs-3"></i>&nbsp;&nbsp;John

@@ -214,5 +214,15 @@ function select_members( $conn ){
 function select_events($conn, $sname, $sorg, $szip, $scity, $scountry, $sstartDate, $sendDate){
     $query = "SELECT * FROM tb_event INNER JOIN tb_members ON tb_event.usernr = tb_members.usernr INNER JOIN tb_users ON tb_event.usernr = tb_users.usernr WHERE tb_users.active = '1'";
     return mysqli_query($conn, $query);
-}   
+}
+
+function select_policyByLang($conn, $lang){
+    $query = "SELECT * FROM tb_default_lang WHERE langu='$lang'";
+    return mysqli_query($conn, $query);
+}
+
+function select_types($conn){
+    $query = "SELECT * FROM tb_types";
+    return mysqli_query($conn, $query);
+}
 ?>

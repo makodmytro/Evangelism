@@ -1,10 +1,14 @@
 <?php include 'inc/header.php' ?>
+<?php $navTitle = "Search Members"; ?>
 <?php include 'inc/nav.php' ?>
 <?php
 include 'inc/country.php';
 include 'db_conn.php';
 include 'functions.php';
-
+session_start();
+if(!isset($_SESSION["SESSION_EMAIL"])){
+    header("Location: index.php");
+}
 $msg = "";
 $search_name = "      ";
 $search_zip = "     ";
