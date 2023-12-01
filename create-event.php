@@ -3,11 +3,7 @@
 <?php include 'inc/nav.php' ?>
 
 <?php
-session_start();
-include 'db_conn.php';
 include 'inc/country.php';
-include 'functions.php';
-session_start();
 if(!isset($_SESSION["SESSION_EMAIL"])){
     header("Location: index.php");
 }

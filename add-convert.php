@@ -3,9 +3,7 @@
 <?php include 'inc/nav.php' ?>
 
 <?php
-include 'db_conn.php';
 include 'inc/country.php';
-include 'functions.php';
 
 $res = false;
 $msg = "";

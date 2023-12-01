@@ -1,5 +1,8 @@
 <?php
-define("DOMAINE","http://localhost/Evangelism-email-marketing--PHP");
+define("DOMAIN","http://localhost/Evangelism-email-marketing--PHP");
+session_start();
+include ("db_conn.php");
+include ("functions.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -27,10 +30,14 @@ define("DOMAINE","http://localhost/Evangelism-email-marketing--PHP");
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css" type="text/css" media="all" />
-  <script src="<?= DOMAINE . "/assets/js/script.js" ?>"></script>
+  <script src="<?= DOMAIN . "/assets/js/script.js" ?>"></script>
   <style>
     .btn-img {
       width: 40px;
+    }
+
+    #ui-datepicker-div{
+      z-index: 99999 !important;
     }
   </style>
 </head>

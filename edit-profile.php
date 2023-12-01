@@ -1,12 +1,13 @@
 <?php
-session_start();
+include 'inc/header.php';
+$navTitle="Edit Profile";
+include 'inc/nav.php';
+?>
+<?php
 if(!isset($_SESSION["SESSION_EMAIL"])){
     header("Location: index.php");
 }
 
-
-include 'db_conn.php';
-include 'functions.php';
 include 'inc/country.php';
 
 $msg = '';
@@ -95,10 +96,7 @@ if (isset($_POST['submit'])) {
 }
 ?>
 
-<?php
-include 'inc/header.php';
-include 'inc/nav.php';
-?>
+
 <section class="container h-100">
     <?php include 'inc/top.php' ?>
     <div class="main-container">

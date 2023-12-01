@@ -6,7 +6,7 @@ use PHPMailer\PHPMailer\Exception;
 
 require 'vendor/autoload.php';
 
-define('DOMAIN', 'http://localhost/Evangelism-email-marketing--PHP');
+define('f_DOMAIN', 'http://localhost/Evangelism-email-marketing--PHP');
 function isEmailVerified($conn, $verificationCode)
 {
     $query = "SELECT * FROM tb_users WHERE rcode='$verificationCode'";
@@ -104,8 +104,8 @@ function send_email($email, $code, $for)
                 . $code . '</a></b>';
         } else {
             $mail->Subject = 'Register verfiy';
-            $mail->Body = 'Here is the verification link <b><a href="' . DOMAIN . '/?verification='
-                . $code . '">' . DOMAIN . '/?verification='
+            $mail->Body = 'Here is the verification link <b><a href="' . f_DOMAIN . '/?verification='
+                . $code . '">' . f_DOMAIN . '/?verification='
                 . $code . '</a></b>';
         }
 
@@ -206,8 +206,8 @@ function addConvert($conn, $email, $fullname, $street, $zip, $city, $country, $c
     }
 }
 
-function select_members( $conn ){
-    $query = "SELECT * FROM tb_users INNER JOIN tb_members ON tb_users.usernr = tb_members.usernr WHERE tb_users.active = '1'";
+function select_members( $conn, $s_type, $s_fullname, $s_organization, $s_zip, $s_city, $s_country ){
+    $query = "SELECT * FROM tb_users INNER JOIN tb_members ON tb_users.usernr = tb_members.usernr WHERE tb_users.active = '1' AND tb_members.fullname LIKE '%{$s_fullname}%' AND tb_members.zip LIKE '%{$s_zip}%' AND tb_members.type LIKE '%{$s_type}%' AND tb_members.organization LIKE '%{$s_organization}%' AND tb_members.city LIKE '%{$s_city}%' AND tb_members.country LIKE '%{$s_country}%'";
     return mysqli_query($conn, $query);
 }
 
@@ -215,7 +215,7 @@ function select_events($conn, $sname, $sorg, $szip, $scity, $scountry, $sstartDa
     $query = "SELECT * FROM tb_event INNER JOIN tb_members ON tb_event.usernr = tb_members.usernr INNER JOIN tb_users ON tb_event.usernr = tb_users.usernr WHERE tb_users.active = '1'";
     return mysqli_query($conn, $query);
 }
-
+ 
 function select_policyByLang($conn, $lang){
     $query = "SELECT * FROM tb_default_lang WHERE langu='$lang'";
     return mysqli_query($conn, $query);
@@ -223,6 +223,32 @@ function select_policyByLang($conn, $lang){
 
 function select_types($conn){
     $query = "SELECT * FROM tb_types";
+    return mysqli_query($conn, $query);
+}
+
+function select_event_detail($conn, $event_id){
+    $query = "SELECT * FROM tb_event INNER JOIN tb_members ON tb_event.usernr = tb_members.usernr INNER JOIN tb_users ON tb_event.usernr = tb_users.usernr WHERE tb_event.eventnr = '{$event_id}'";
+    return mysqli_query($conn, $query);
+}
+
+function select_meFromEvent($conn, $event_id, $usernr){
+    $query = "SELECT * FROM tb_event_att WHERE tb_event_att.usernr='{$usernr}' AND tb_event_att.eventnr='$event_id'";
+    return mysqli_query($conn, $query);
+}
+
+function attend_meToEvent($conn, $usernr, $eventnr){
+    $cdate = date("Y-m-d H:i:s");
+    $query = "INSERT INTO tb_event_att (eventnr, usernr, cdate) VALUES ('{$eventnr}', '{$usernr}', '{$cdate}')";
+    return mysqli_query($conn, $query);
+}
+
+function delete_meFromEvent($conn, $usernr, $eventnr){
+    $query = "DELETE FROM tb_event_att WHERE tb_event_att.eventnr='{$eventnr}' AND tb_event_att.usernr='{$usernr}'";
+    return mysqli_query($conn, $query);
+}
+
+function select_eventMembers($conn, $event_id){
+    $query = "SELECT * FROM tb_event_att INNER JOIN tb_users ON tb_event_att.usernr = tb_users.usernr INNER JOIN tb_members ON tb_event_att.usernr = tb_members.usernr WHERE tb_event_att.eventnr='{$event_id}'";
     return mysqli_query($conn, $query);
 }
 ?>

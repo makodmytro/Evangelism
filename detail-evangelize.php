@@ -3,7 +3,6 @@
 <?php include 'inc/nav.php' ?>
 <?php 
 include 'inc/language.php';
-session_start();
 if(!isset($_SESSION["SESSION_EMAIL"])){
     header("Location: index.php");
 }

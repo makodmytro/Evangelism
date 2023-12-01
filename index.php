@@ -1,13 +1,10 @@
 <?php
-    session_start();
     // if (isset($_SESSION['SESSION_EMAIL'])) {
     //     header("Location: home.php");
     //     die();
     // }
 
     include 'inc/header.php';
-    include 'db_conn.php';
-    include 'functions.php';
 
     $msg = "";
 
@@ -32,6 +29,9 @@
             if (empty($user['code'])) {
                 $_SESSION['SESSION_EMAIL'] = $email;
                 if($user['usernr']) {
+                    $res_user = select_userById($conn, $user['usernr']);
+                    $uuser = mysqli_fetch_assoc($res_user);
+                    $_SESSION['fullname'] = $uuser['fullname'];
                     if(isUsernrExistsInMembers($conn, $user['usernr']) && $user["active"] == 1) {
                         header("Location: home.php");
                     } else {

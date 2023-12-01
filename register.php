@@ -1,8 +1,6 @@
 <!-- register.php -->
 <?php
-session_start();
-include 'db_conn.php';
-include 'functions.php';
+include 'inc/header.php';
 
 $msg = "";
 
@@ -53,7 +51,6 @@ if (isset($_POST['submit'])) {
 
 ?>
 
-<?php include 'inc/header.php' ?>
 <section class="container h-100">
     <div class="d-flex justify-content-center align-items-center h-100">
         <div class="d-flex gap-5">

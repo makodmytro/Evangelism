@@ -3,9 +3,6 @@
 <?php include 'inc/nav.php' ?>
 
 <?php
-    include 'db_conn.php';
-    include 'functions.php';
-    session_start();
     if(!isset($_SESSION["SESSION_EMAIL"])){
         header("Location: index.php");
     }
@@ -32,27 +29,72 @@
             <?= $msg ?>
             <div class="col-md-4 col-sm-12">
                 <a href="evangelise.php">
-                    <button class="btn btn-primary w-100 mt-5 mb-5 h-50"><img src="assets/images/logo.png" alt="" style="width: 50px">Evangelism</button>
+                    <button class="btn btn-primary w-100 mt-5 mb-5 h-50">
+                        <div class="d-flex justify-content-center">
+                            <div>
+                                <img src="<?= DOMAIN ?>/assets/images/home1.png" alt="">
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center">
+                                Evangelism
+                            </div>
+                        </div>
+                    </button>
                 </a>
             </div>
             <div class="col-md-4 col-sm-12">
                 <a href="add-convert.php">
-                    <button class="btn btn-primary w-100 mt-5 mb-5 h-50">Add Convert</button>
+                    <button class="btn btn-primary w-100 mt-5 mb-5 h-50">
+                        <div class="d-flex justify-content-center">
+                            <div>
+                                <img src="<?= DOMAIN ?>/assets/images/home2.png" alt="">
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center">
+                                Add Convert
+                            </div>
+                        </div>
+                    </button>
                 </a>
             </div>
             <div class="col-md-4 col-sm-12">
                 <a href="search-members.php">
-                    <button class="btn btn-primary w-100 mt-5 mb-5 h-50">Search Members</button>
+                    <button class="btn btn-primary w-100 mt-5 mb-5 h-50">
+                        <div class="d-flex justify-content-center">
+                            <div>
+                                <img src="<?= DOMAIN ?>/assets/images/home3.png" alt="">
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center">
+                                Search Members
+                            </div>
+                        </div>
+                    </button>
                 </a>
             </div>
             <div class="col-md-4 col-sm-12">
                 <a href="create-event.php">
-                    <button class="btn btn-primary w-100 mt-5 mb-5 h-50">Create Event</button>
+                    <button class="btn btn-primary w-100 mt-5 mb-5 h-50">
+                        <div class="d-flex justify-content-center">
+                            <div>
+                                <img src="<?= DOMAIN ?>/assets/images/events.png" alt="">
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center">
+                                Create Event
+                            </div>
+                        </div>
+                    </button>
                 </a>
             </div>
             <div class="col-md-4 col-sm-12">
                 <a href="search-event.php">
-                    <button class="btn btn-primary w-100 mt-5 mb-5 h-50">Search Event</button>
+                    <button class="btn btn-primary w-100 mt-5 mb-5 h-50">
+                        <div class="d-flex justify-content-center">
+                            <div>
+                                <img src="<?= DOMAIN ?>/assets/images/home5.png" alt="">
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center">
+                                Search Event
+                            </div>
+                        </div>
+                    </button>
                 </a>
             </div>
         </div>

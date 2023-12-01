@@ -1,3 +1,4 @@
+<?php $navTitle = "Edit Profile"; ?>
 <?php
 session_start();
 
