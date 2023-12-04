@@ -8,24 +8,90 @@ if (!isset($_SESSION["SESSION_EMAIL"])) {
 $msg = '';
 
 if ($_GET["usernr"]) {
-    $usernr = $_GET['usernr'];
+    $m_usernr = $_GET['usernr'];
 } else {
     header("Location: search-members.php");
 }
 try {
-    $res = select_userById($conn, $usernr);
-    $user = mysqli_fetch_assoc($res);
+    $res = select_userById($conn, $m_usernr);
+    $e_user = mysqli_fetch_assoc($res);
 } catch (\Throwable $th) {
     $msg = "<div class='alert alert-danger'>{$th->getMessage()}</div>";
 }
 
+try {
+    $res_connect = select_connectMembers($conn, $_SESSION['usernr'], $m_usernr);
+    $conn_stt = $res_connect->num_rows == 0 ? false : true;
+    if($conn_stt){
+        $sql_stt = mysqli_fetch_assoc($res_connect)['status'] == 1 ? true: false;
+    }
+} catch (\Throwable $th) {
+    //throw $th;
+}
+
+if (isset($_POST["deactive"])) {
+    $res_updateActive = update_activeMember($conn, $m_usernr, 0);
+    try {
+        $res = select_userById($conn, $m_usernr);
+        $e_user = mysqli_fetch_assoc($res);
+    } catch (\Throwable $th) {
+        $msg = "<div class='alert alert-danger'>{$th->getMessage()}</div>";
+    }
+}
+if (isset($_POST["active"])) {
+    $res_updateActive = update_activeMember($conn, $m_usernr, 1);
+    try {
+        $res = select_userById($conn, $m_usernr);
+        $e_user = mysqli_fetch_assoc($res);
+    } catch (\Throwable $th) {
+        $msg = "<div class='alert alert-danger'>{$th->getMessage()}</div>";
+    }
+}
+
+if (isset($_POST["disconnect"])) {
+    try {
+        $res_conn = delete_connect($conn, $_SESSION["usernr"], $m_usernr);
+        try {
+            $res_connect = select_connectMembers($conn, $_SESSION['usernr'], $m_usernr);
+            $conn_stt = $res_connect->num_rows == 0 ? false : true;
+            if($conn_stt){
+                $sql_stt = mysqli_fetch_assoc($res_connect)['status'] == 1 ? true: false;
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    } catch (\Throwable $th) {
+        $msg = "<div class='alert alert-danger'>{$th->getMessage()}</div>";
+    }
+}
+
+if (isset($_POST["connect"])) {
+    try {
+        if ($conn_stt) {
+            $res_conn = update_connect($conn, $_SESSION["usernr"], $m_usernr);
+        } else {
+            $res_conn = create_connect($conn, $_SESSION["usernr"], $m_usernr);
+        }
+        try {
+            $res_connect = select_connectMembers($conn, $_SESSION['usernr'], $m_usernr);
+            $conn_stt = $res_connect->num_rows == 0 ? false : true;
+            if($conn_stt){
+                $sql_stt = mysqli_fetch_assoc($res_connect)['status'] == 1 ? true: false;
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    } catch (\Throwable $th) {
+        $msg = "<div class='alert alert-danger'>{$th->getMessage()}</div>";
+    }
+}
 ?>
 
 <section class="container h-100">
     <?php include 'inc/top.php' ?>
     <div class="main-container pt-5">
+        <?= $msg ?>
         <div class="map-container">
-            <?= $msg ?>
             <div class="border border-1 border-solid map-content">
                 <img src="assets/images/map.png" alt="" class="w-100">
             </div>
@@ -33,24 +99,24 @@ try {
                 <h2 class="mb-0 pt-3">Church</h2>
                 <hr>
                 <h3>
-                    <?= $user['fullname'] ?>
+                    <?= $e_user['fullname'] ?>
                 </h3>
                 <h3 class="fst-italic">Jesus Church</h3>
                 <h6>
-                    <?= $user['street'] ?>
+                    <?= $e_user['street'] ?>
                 </h6>
                 <h6>
-                    <?= $user['zip'] ?>,
-                    <?= $user['city'] ?>
+                    <?= $e_user['zip'] ?>,
+                    <?= $e_user['city'] ?>
                 </h6>
                 <h6>
-                    <?= strtoupper($user['country']) ?>
+                    <?= strtoupper($e_user['country']) ?>
                 </h6>
                 <h6>
-                    <?= $user['cellphone'] ?>
+                    <?= $e_user['cellphone'] ?>
                 </h6>
                 <h6>
-                    <?= $user['telephone'] ?>
+                    <?= $e_user['telephone'] ?>
                 </h6>
                 <hr>
                 <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal"
@@ -87,22 +153,34 @@ try {
                 </button>
                 <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal"
                     data-bs-target="#allowModal">
-                    <div class="d-flex justify-content-center">
-                        <div>
-                            <img src="<?= DOMAIN ?>/assets/images/connection.png" alt="">
+                    <?php if (!!$sql_stt && $conn_stt && $sql_stt) { ?>
+                        <div class="d-flex justify-content-center">
+                            <div>
+                                <img src="<?= DOMAIN ?>/assets/images/connection.png" alt="">
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center">
+                                Remove
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-center align-items-center">
-                            Connect
+                    <?php } else { ?>
+                        <div class="d-flex justify-content-center">
+                            <div>
+                                <img src="<?= DOMAIN ?>/assets/images/connection.png" alt="">
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center">
+                                Connect
+                            </div>
                         </div>
-                    </div>
+                    <?php } ?>
                 </button>
-                <button class="btn btn-default mx-auto w-75 mt-1 mb-1">
+                <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal"
+                    data-bs-target="#activeModal">
                     <div class="d-flex justify-content-center">
                         <div>
                             <img src="<?= DOMAIN ?>/assets/images/active.png" alt="">
                         </div>
                         <div class="d-flex justify-content-center align-items-center">
-                            Activate
+                            <?= $e_user["active"] ?>Activate
                         </div>
                     </div>
                 </button>
@@ -158,23 +236,51 @@ try {
 
     <div class="modal fade" id="allowModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Request Connection</h5>
+            <form action="" method="post">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Request Connection</h5>
+                    </div>
+                    <div class="modal-footer justify-content-center pt-5 pb-3">
+                        <button type="button" class="btn btn-default px-5" data-bs-dismiss="modal">No</button>
+                        <button type="submit"
+                            name="<?php if (!!$sql_stt && $conn_stt && $sql_stt) {
+                                echo 'disconnect';
+                            } else {
+                                echo 'connect';
+                            } ?>"
+                            class="btn btn-default px-5" data-bs-dismiss="modal">Yes</button>
+                    </div>
                 </div>
-                <div class="modal-footer justify-content-center pt-5 pb-3">
-                    <button type="button" class="btn btn-default px-5" data-bs-dismiss="modal">No</button>
-                    <button type="button" class="btn btn-default px-5" data-bs-dismiss="modal">Yes</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="activeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form action="" method="post">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="exampleModalLabel">Activate Member</h4>
+                    </div>
+                    <div class="modal-footer justify-content-center pt-5 pb-3">
+                        <button type="button" class="btn btn-default px-5" data-bs-dismiss="modal">No</button>
+                        <button type="submit" name="<?php if ($e_user["active"] == 1) {
+                            echo 'deactive';
+                        } else {
+                            echo 'active';
+                        } ?>" class="btn btn-default px-5" data-bs-dismiss="modal">Yes</button>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 
 </section>
 
 <script>
-    function gotoEventPage(){
-        window.location.href = "<?= DOMAIN ?>/search-event.php?usernr=<?= $usernr ?>"
+    function gotoEventPage() {
+        window.location.href = "<?= DOMAIN ?>/search-event.php?usernr=<?= $m_usernr ?>"
     }
 </script>
 

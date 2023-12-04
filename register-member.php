@@ -1,9 +1,7 @@
 <?php $navTitle = "Edit Profile"; ?>
 <?php
-session_start();
-
-include 'db_conn.php';
-include 'functions.php';
+include 'inc/header.php';
+include 'inc/nav.php';
 include 'inc/country.php';
 
 $msg = "";
@@ -92,15 +90,10 @@ if (isset($_POST['submit'])) {
 }
 ?>
 
-<?php
-include 'inc/header.php';
-include 'inc/nav.php';
-?>
 <section class="container h-100">
     <?php include 'inc/top.php' ?>
     <div class="main-container">
         <?php echo $msg; ?>
-        <?php echo $_SESSION["SESSION_EMAIL"] ?>
         <form action="" method="post">
             <div class="row w-100 mt-5 ms-0">
                 <div class="col-lg-7 col-md-12 border border-1 border-solid px-5 pt-3 pb-3 mb-5">

@@ -1,5 +1,7 @@
 <?php
-    // select_userByEmail($conn, $email);
+    if(!$_SESSION["fullname"]){
+        header("Location: index.php");
+    }
 ?>
 <nav class="navbar bg-primary text-white position-fixed w-100">
     <div class="w-100 ps-4 pe-4 d-flex justify-content-between align-items-center">

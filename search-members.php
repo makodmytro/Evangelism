@@ -56,9 +56,8 @@ if (isset($_POST['submit'])) {
                 if ($res->num_rows > 0) {
                 while ($row = $res->fetch_assoc()) {
                     $lop = $lop + 1; ?>
-                    <div class="member-container <?= $lop % 2 == 1 ? "bg-primary text-white" : ""; ?> "
-                        onclick="gotoMemberDetail(<?= $row["usernr"] ?>)">
-                        <div class="member-image"><img src="assets/images/member.png" alt=""></div>
+                    <div class="member-container <?= $lop % 2 == 1 ? 'bg-primary text-white' : ''; ?>">
+                        <div class="member-image cursor-pointer" onclick="gotoMemberDetail(<?= $row['usernr'] ?>)"><img src="assets/images/member.png" alt=""></div>
                         <div class="member-info">
                             <div>
                                 <?= $row["fullname"] ?>
@@ -75,6 +74,7 @@ if (isset($_POST['submit'])) {
                             <div>
                                 <?= $row["cellphone"] ?>
                             </div>
+                            
                         </div>
                     </div>
                 <?php }} else { ?>
@@ -141,7 +141,7 @@ if (isset($_POST['submit'])) {
                             </div>
                         </div>
                         <div class="modal-footer pt-5">
-                            <button type="button" class="btn btn-default px-5" data-bs-dismiss="modal">Clear</button>
+                            <button type="button" class="btn btn-default px-5" onclick="clearHandle()">Clear</button>
                             <button type="submit" name="submit" class="btn btn-default px-5">Search</button>
                         </div>
                     </form>
@@ -155,6 +155,10 @@ if (isset($_POST['submit'])) {
     function gotoMemberDetail(usernr) {
         window.location.href = '<?= DOMAIN . "/member-detail.php?usernr=" ?>' + usernr;
     }   
+
+    function clearHandle() {
+        window.location.href = "<?= DOMAIN ?>/search-event.php"
+    }  
 </script>
 
 <?php include 'inc/footer.php' ?>

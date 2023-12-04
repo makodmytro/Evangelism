@@ -39,6 +39,10 @@ include ("functions.php");
     #ui-datepicker-div{
       z-index: 99999 !important;
     }
+
+    .cursor-pointer {
+      cursor: pointer;
+    }
   </style>
 </head>
 

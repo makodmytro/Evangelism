@@ -7,6 +7,7 @@ use PHPMailer\PHPMailer\Exception;
 require 'vendor/autoload.php';
 
 define('f_DOMAIN', 'http://localhost/Evangelism-email-marketing--PHP');
+date_default_timezone_set('UTC');
 function isEmailVerified($conn, $verificationCode)
 {
     $query = "SELECT * FROM tb_users WHERE rcode='$verificationCode'";
@@ -125,13 +126,13 @@ function select_oneuserByEmail($conn, $email)
 
 function select_userByEmail($conn, $email)
 {
-    $query = "SELECT * FROM tb_users INNER JOIN tb_members ON tb_users.usernr = tb_members.usernr WHERE tb_users.email = '{$email}'";
+    $query = "SELECT * FROM tb_users CROSS JOIN tb_members ON tb_users.usernr = tb_members.usernr WHERE tb_users.email = '{$email}'";
     return mysqli_query($conn, $query);
 }
 
 function select_userById($conn, $id)
 {
-    $query = "SELECT * FROM tb_users INNER JOIN tb_members ON tb_users.usernr = tb_members.usernr WHERE tb_users.usernr = '{$id}'";
+    $query = "SELECT * FROM tb_users CROSS JOIN tb_members ON tb_users.usernr = tb_members.usernr WHERE tb_users.usernr = '{$id}'";
     return mysqli_query($conn, $query);
 }
 
@@ -198,7 +199,6 @@ function addConvert($conn, $email, $fullname, $street, $zip, $city, $country, $c
     if($email != ""){
         return mysqli_query($conn, $query);
     } else {
-        date_default_timezone_set('UTC');
         $currentDateTime = date('Y-m-d H:i:s');
 
         $query = "INSERT INTO tb_connection (usernr1, usernr2, cdate, status) VALUES ('$usernr', '$insertId', '{$currentDateTime}', 'S')";
@@ -207,12 +207,12 @@ function addConvert($conn, $email, $fullname, $street, $zip, $city, $country, $c
 }
 
 function select_members( $conn, $s_type, $s_fullname, $s_organization, $s_zip, $s_city, $s_country ){
-    $query = "SELECT * FROM tb_users INNER JOIN tb_members ON tb_users.usernr = tb_members.usernr WHERE tb_users.active = '1' AND tb_members.fullname LIKE '%{$s_fullname}%' AND tb_members.zip LIKE '%{$s_zip}%' AND tb_members.type LIKE '%{$s_type}%' AND tb_members.organization LIKE '%{$s_organization}%' AND tb_members.city LIKE '%{$s_city}%' AND tb_members.country LIKE '%{$s_country}%'";
+    $query = "SELECT * FROM tb_users CROSS JOIN tb_members ON tb_users.usernr = tb_members.usernr WHERE tb_users.active = '1' AND tb_members.fullname LIKE '%{$s_fullname}%' AND tb_members.zip LIKE '%{$s_zip}%' AND tb_members.type LIKE '%{$s_type}%' AND tb_members.organization LIKE '%{$s_organization}%' AND tb_members.city LIKE '%{$s_city}%' AND tb_members.country LIKE '%{$s_country}%'";
     return mysqli_query($conn, $query);
 }
 
 function select_events($conn, $sname, $sorg, $szip, $scity, $scountry, $sstartDate, $sendDate){
-    $query = "SELECT * FROM tb_event INNER JOIN tb_members ON tb_event.usernr = tb_members.usernr INNER JOIN tb_users ON tb_event.usernr = tb_users.usernr WHERE tb_users.active = '1'";
+    $query = "SELECT * FROM tb_event CROSS JOIN tb_members ON tb_event.usernr = tb_members.usernr CROSS JOIN tb_users ON tb_event.usernr = tb_users.usernr WHERE tb_users.active = '1' AND tb_event.name LIKE '%{$sname}%' AND tb_members.organization LIKE '%{$sorg}%' AND tb_event.zip LIKE '%{$szip}%' AND tb_event.city LIKE '%{$scity}%' AND tb_event.country LIKE '%{$scountry}%'";
     return mysqli_query($conn, $query);
 }
  
@@ -227,7 +227,7 @@ function select_types($conn){
 }
 
 function select_event_detail($conn, $event_id){
-    $query = "SELECT * FROM tb_event INNER JOIN tb_members ON tb_event.usernr = tb_members.usernr INNER JOIN tb_users ON tb_event.usernr = tb_users.usernr WHERE tb_event.eventnr = '{$event_id}'";
+    $query = "SELECT * FROM tb_event CROSS JOIN tb_members ON tb_event.usernr = tb_members.usernr CROSS JOIN tb_users ON tb_event.usernr = tb_users.usernr WHERE tb_event.eventnr = '{$event_id}'";
     return mysqli_query($conn, $query);
 }
 
@@ -248,7 +248,33 @@ function delete_meFromEvent($conn, $usernr, $eventnr){
 }
 
 function select_eventMembers($conn, $event_id){
-    $query = "SELECT * FROM tb_event_att INNER JOIN tb_users ON tb_event_att.usernr = tb_users.usernr INNER JOIN tb_members ON tb_event_att.usernr = tb_members.usernr WHERE tb_event_att.eventnr='{$event_id}'";
+    $query = "SELECT * FROM tb_event_att CROSS JOIN tb_users ON tb_event_att.usernr = tb_users.usernr CROSS JOIN tb_members ON tb_event_att.usernr = tb_members.usernr WHERE tb_event_att.eventnr='{$event_id}'";
+    return mysqli_query($conn, $query);
+}
+
+function update_activeMember($conn, $usernr, $val){
+    $query = "UPDATE tb_users SET tb_users.active='{$val}' WHERE tb_users.usernr='{$usernr}'";
+    return mysqli_query($conn, $query);
+}
+
+function select_connectMembers($conn, $usernr1, $usernr2){
+    $query = "SELECT * FROM tb_connection WHERE tb_connection.usernr2='{$usernr2}' AND tb_connection.usernr1='{$usernr1}'";
+    return mysqli_query($conn, $query);
+}
+
+function create_connect($conn, $usernr1, $usernr2){
+    $currentDateTime = date('Y-m-d H:i:s');
+    $query = "INSERT INTO tb_connection (usernr1, usernr2, cdate, status) VALUES ('$usernr1', '$usernr2', '$currentDateTime', '1')";
+    return mysqli_query($conn, $query);
+}
+
+function update_connect($conn, $usernr1, $usernr2){
+    $query = "UPDATE tb_connection SET tb_connection.status = '1' WHERE tb_connection.usernr2='{$usernr2}' AND tb_connection.usernr1='{$usernr1}'";
+    return mysqli_query($conn, $query);
+}
+
+function delete_connect($conn, $usernr1, $usernr2){
+    $query = "UPDATE tb_connection SET tb_connection.status = '2' WHERE tb_connection.usernr2='{$usernr2}' AND tb_connection.usernr1='{$usernr1}'";
     return mysqli_query($conn, $query);
 }
 ?>

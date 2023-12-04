@@ -10,8 +10,8 @@ if (!isset($_SESSION["SESSION_EMAIL"])) {
 }
 
 $msg = "";
-$search_name = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-$search_zip = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+$search_name = "     ";
+$search_zip = "     ";
 $sname = "";
 $sorg = "";
 $szip = "";
@@ -19,6 +19,12 @@ $scity = "";
 $scountry = "";
 $sstartDate = "";
 $sendDate = "";
+
+try {
+    $res_events = select_events($conn, $sname, $sorg, $szip, $scity, $scountry, $sstartDate, $sendDate);
+} catch (\Throwable $th) {
+    $msg = "<div class='alert alert-danger'>" . $th->getMessage() . "</div>";
+}
 
 if (isset($_POST['submit'])) {
     $sname = mysqli_real_escape_string($conn, $_POST['event']);
@@ -29,17 +35,10 @@ if (isset($_POST['submit'])) {
     $sstartDate = mysqli_real_escape_string($conn, $_POST['startDate']);
     $sendDate = mysqli_real_escape_string($conn, $_POST['endDate']);
     try {
-        $res = select_events($conn, $sname, $sorg, $szip, $scity, $scountry, $sstartDate, $sendDate);
-        header('Location: event-detail.php');
+        $res_events = select_events($conn, $sname, $sorg, $szip, $scity, $scountry, $sstartDate, $sendDate);
     } catch (\Throwable $th) {
         $msg = "<div class='alert alert-danger'>" . $th->getMessage() . "</div>";
     }
-}
-
-try {
-    $res = select_events($conn, $sname, $sorg, $szip, $scity, $scountry, $sstartDate, $sendDate);
-} catch (\Throwable $th) {
-    $msg = "<div class='alert alert-danger'>" . $th->getMessage() . "</div>";
 }
 
 ?>
@@ -47,6 +46,7 @@ try {
 <section class="container h-100">
     <?php include 'inc/top.php' ?>
     <div class="main-container pt-5">
+        <?= $msg ?>
         <div class="border border-1 border-solid pt-4 pb-4 position-relative">
             <button class="btn btn-primary position-absolute" data-bs-toggle="modal" data-bs-target="#addFilterModal"
                 style="top: -20px; left: 10px">Filters</button>
@@ -56,8 +56,8 @@ try {
             </div>
             <div class="mt-3">
                 <?php $lop = 0;
-                if ($res->num_rows > 0) {
-                    while ($row = $res->fetch_assoc()) {
+                if ($res_events->num_rows > 0) {
+                    while ($row = $res_events->fetch_assoc()) {
                         $lop = $lop + 1; ?>
                         <div class="member-container <?= $lop % 2 == 1 ? "bg-primary text-white" : ""; ?> "
                             onclick="gotoMemberDetail(<?= $row['eventnr'] ?>)">
@@ -77,6 +77,9 @@ try {
                                 </div>
                                 <div>
                                     <?= $row["cellphone"] ?>
+                                </div>
+                                <div>
+                                    <?= $row["dateofevent"] ?>
                                 </div>
                             </div>
                         </div>
@@ -135,17 +138,17 @@ try {
                             <div class="row px-3">
                                 <div class="col-sm-4">
                                     <input type="text" id="from" class="form-control mt-3" name="startDate"
-                                        placeholder="Country">
+                                        placeholder="Start Date">
                                 </div>
                                 <div class="col-sm-4">
                                     <input type="text" id="to" class="form-control mt-3" name="endDate"
-                                        placeholder="Country">
+                                        placeholder="End Date">
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer pt-5">
-                            <button type="button" class="btn btn-default px-5" data-bs-dismiss="modal">Clear</button>
-                            <button type="submit" class="btn btn-default px-5">Search</button>
+                            <button type="button" class="btn btn-default px-5" onclick="clearHandle()">Clear</button>
+                            <button type="submit" name="submit" class="btn btn-default px-5">Search</button>
                         </div>
                     </div>
                 </form>
@@ -189,6 +192,10 @@ try {
             return date;
         }
     });
+
+    function clearHandle() {
+        window.location.href = "<?= DOMAIN ?>/search-event.php"
+    }   
 </script>
 
 
