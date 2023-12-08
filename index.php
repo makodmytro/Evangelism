@@ -1,13 +1,10 @@
 <?php
-    // if (isset($_SESSION['SESSION_EMAIL'])) {
-    //     header("Location: home.php");
-    //     die();
-    // }
-
+    if (isset($_SESSION['SESSION_EMAIL'])) {
+        header("Location: home.php");
+        die();
+    }
     include 'inc/header.php';
-
     $msg = "";
-
     if (isset($_GET['verification'])) {
         $verificationCode = $_GET['verification'];
 
@@ -16,15 +13,14 @@
                 $msg = "<div class='alert alert-success'>Account verification has been successfully completed.</div>";
             }
         } else {
-            header("Location: index.php");
+            $msg = "<div class='alert alert-warning'>Account verification has been failed.</div>";
         }
     }
 
-    if (isset($_POST['submit'])) {
+    if (isset($_POST['login'])) {
         $email = mysqli_real_escape_string($conn, $_POST['email']);
         $password = mysqli_real_escape_string($conn, $_POST['password']);
         $user = loginUser($conn, $email, $password);
-
         if ($user) {
             if (empty($user['code'])) {
                 $_SESSION['SESSION_EMAIL'] = $email;
@@ -33,9 +29,11 @@
                     $uuser = mysqli_fetch_assoc($res_user);
                     $_SESSION['fullname'] = $uuser['fullname'];
                     if(isUsernrExistsInMembers($conn, $user['usernr']) && $user["active"] == 1) {
-                        header("Location: home.php");
+                        // header("Location: home.php");
+                        die();
                     } else {
-                        header('Location: register-member.php');
+                        // header('Location: register-member.php');
+                        die();
                     }
                 } else {
                     $msg = "<div class='alert alert-warning'>Something went wrong.</div>";
@@ -57,7 +55,6 @@
             </div>
             <div class="w-50 pt-3 pb-3">
                 <h2>Login Now</h2>
-                <p class="mt-3 mb-3">Plese fill these fields.. </p>
                 <?php echo $msg; ?>
                 <form action="" method="post">
                     <input type="email" class="form-control mt-3" name="email" placeholder="Enter Your Email" required>
@@ -67,7 +64,7 @@
                             Forgot Password?
                         </a>
                     </p>
-                    <button name="submit" class="btn btn-primary mt-3 w-100" type="submit">Login</button>
+                    <button name="login" class="btn btn-primary mt-3 w-100" type="submit">Login</button>
                 </form>
                 <p class="mt-3 text-center">Create Account!&nbsp;&nbsp;&nbsp;<a href="register.php">Register</a>.</p>
             </div>

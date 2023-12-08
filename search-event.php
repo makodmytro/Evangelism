@@ -59,9 +59,8 @@ if (isset($_POST['submit'])) {
                 if ($res_events->num_rows > 0) {
                     while ($row = $res_events->fetch_assoc()) {
                         $lop = $lop + 1; ?>
-                        <div class="member-container <?= $lop % 2 == 1 ? "bg-primary text-white" : ""; ?> "
-                            onclick="gotoMemberDetail(<?= $row['eventnr'] ?>)">
-                            <div class="member-image"><img src="assets/images/events.png" alt=""></div>
+                        <div class="member-container <?= $lop % 2 == 1 ? "bg-primary text-white" : ""; ?> ">
+                            <div class="member-image cursor-pointer" onclick="gotoMemberDetail(<?= $row['eventnr'] ?>)"><img src="assets/images/events.png" alt=""></div>
                             <div class="member-info">
                                 <div>
                                     <?= $row["fullname"] ?>

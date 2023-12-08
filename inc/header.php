@@ -1,5 +1,5 @@
 <?php
-define("DOMAIN","http://localhost/Evangelism-email-marketing--PHP");
+define("DOMAIN","https://www.hopeforevangelism.com/evangel");
 session_start();
 include ("db_conn.php");
 include ("functions.php");
@@ -31,6 +31,12 @@ include ("functions.php");
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css" type="text/css" media="all" />
   <script src="<?= DOMAIN . "/assets/js/script.js" ?>"></script>
+
+<!-- google api key 
+    API Key: AIzaSyBuPQQ2QSIG6tAjKiWrFJmDYFX7456G61o
+    You can only use it from our webserver.
+    https://www.hopeforevangelism.com/ 
+-->
   <style>
     .btn-img {
       width: 40px;

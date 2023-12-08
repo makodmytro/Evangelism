@@ -36,7 +36,6 @@ if (isset($_POST['submit'])) {
             </div>
             <div class="w-50 pt-3 pb-3">
                 <h2>Forgot Password</h2>
-                <p class="mt-3 mb-3">Plese fill these fields.. </p>
                 <?php echo $msg; ?>
                 <form action="" method="post">
                     <input type="email" class="form-control mt-3" name="email" placeholder="Enter Your Email" required>

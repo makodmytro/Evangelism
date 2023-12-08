@@ -22,8 +22,8 @@ try {
 try {
     $res_connect = select_connectMembers($conn, $_SESSION['usernr'], $m_usernr);
     $conn_stt = $res_connect->num_rows == 0 ? false : true;
-    if($conn_stt){
-        $sql_stt = mysqli_fetch_assoc($res_connect)['status'] == 1 ? true: false;
+    if ($conn_stt) {
+        $sql_stt = mysqli_fetch_assoc($res_connect)['status'] == 1 ? true : false;
     }
 } catch (\Throwable $th) {
     //throw $th;
@@ -54,8 +54,8 @@ if (isset($_POST["disconnect"])) {
         try {
             $res_connect = select_connectMembers($conn, $_SESSION['usernr'], $m_usernr);
             $conn_stt = $res_connect->num_rows == 0 ? false : true;
-            if($conn_stt){
-                $sql_stt = mysqli_fetch_assoc($res_connect)['status'] == 1 ? true: false;
+            if ($conn_stt) {
+                $sql_stt = mysqli_fetch_assoc($res_connect)['status'] == 1 ? true : false;
             }
         } catch (\Throwable $th) {
             //throw $th;
@@ -75,8 +75,8 @@ if (isset($_POST["connect"])) {
         try {
             $res_connect = select_connectMembers($conn, $_SESSION['usernr'], $m_usernr);
             $conn_stt = $res_connect->num_rows == 0 ? false : true;
-            if($conn_stt){
-                $sql_stt = mysqli_fetch_assoc($res_connect)['status'] == 1 ? true: false;
+            if ($conn_stt) {
+                $sql_stt = mysqli_fetch_assoc($res_connect)['status'] == 1 ? true : false;
             }
         } catch (\Throwable $th) {
             //throw $th;
@@ -173,27 +173,41 @@ if (isset($_POST["connect"])) {
                         </div>
                     <?php } ?>
                 </button>
-                <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal"
-                    data-bs-target="#activeModal">
-                    <div class="d-flex justify-content-center">
-                        <div>
-                            <img src="<?= DOMAIN ?>/assets/images/active.png" alt="">
+                <?php if ($_SESSION["admin"]) { ?>
+                    <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal"
+                        data-bs-target="#activeModal">
+                        <div class="d-flex justify-content-center">
+                            <div>
+                                <img src="<?= DOMAIN ?>/assets/images/active.png" alt="">
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <?= $e_user["active"] ?>Activate
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-center align-items-center">
-                            <?= $e_user["active"] ?>Activate
-                        </div>
-                    </div>
-                </button>
+                    </button>
+                <?php } ?>
                 <div class="d-flex justify-content-between w-75 mx-auto">
-                    <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
-                        <img src="assets/images/world.png" alt="" style="width: 30px">
-                    </button>
-                    <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
-                        <img src="assets/images/facebook.png" alt="" style="width: 30px">
-                    </button>
-                    <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
-                        <img src="assets/images/instagram.png" alt="" style="width: 30px">
-                    </button>
+                    <?php if ($e_user['website']) { ?>
+                        <a href="<?= $e_user['website'] ?>" target="_blank">
+                            <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
+                                <img src="assets/images/world.png" alt="" style="width: 30px">
+                            </button>
+                        </a>
+                    <?php } ?>
+                    <?php if ($e_user['facebook']) { ?>
+                        <a href="<?= $e_user['facebook'] ?>" target="_blank">
+                            <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
+                                <img src="assets/images/facebook.png" alt="" style="width: 30px">
+                            </button>
+                        </a>
+                    <?php } ?>
+                    <?php if ($e_user['instagram']) { ?>
+                        <a href="<?= $e_user['instagram'] ?>" target="_blank">
+                            <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
+                                <img src="assets/images/instagram.png" alt="" style="width: 30px">
+                            </button>
+                        </a>
+                    <?php } ?>
                 </div>
             </div>
         </div>
@@ -243,13 +257,11 @@ if (isset($_POST["connect"])) {
                     </div>
                     <div class="modal-footer justify-content-center pt-5 pb-3">
                         <button type="button" class="btn btn-default px-5" data-bs-dismiss="modal">No</button>
-                        <button type="submit"
-                            name="<?php if (!!$sql_stt && $conn_stt && $sql_stt) {
-                                echo 'disconnect';
-                            } else {
-                                echo 'connect';
-                            } ?>"
-                            class="btn btn-default px-5" data-bs-dismiss="modal">Yes</button>
+                        <button type="submit" name="<?php if (!!$sql_stt && $conn_stt && $sql_stt) {
+                            echo 'disconnect';
+                        } else {
+                            echo 'connect';
+                        } ?>" class="btn btn-default px-5" data-bs-dismiss="modal">Yes</button>
                     </div>
                 </div>
             </form>

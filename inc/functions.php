@@ -6,7 +6,7 @@ use PHPMailer\PHPMailer\Exception;
 
 require 'vendor/autoload.php';
 
-define('f_DOMAIN', 'http://localhost/Evangelism-email-marketing--PHP');
+define('f_DOMAIN', 'https://www.hopeforevangelism.com/evangel');
 date_default_timezone_set('UTC');
 function isEmailVerified($conn, $verificationCode)
 {
@@ -48,14 +48,13 @@ function isUsernrExistsInMembers($conn, $usernr)
 
 function registerUser($conn, $name, $email, $password, $code)
 {
-
     $password = md5($password);
-    $sql = "INSERT INTO tb_users (email, password, rcode) VALUES ('{$email}', '{$password}', '{$code}')";
+    $sql = "INSERT INTO tb_users (email, password, rcode, active, admin) VALUES ('{$email}', '{$password}', '{$code}', '0', '0')";
     $res = mysqli_query($conn, $sql);
     if ($res) {
         $usernr = $conn->insert_id;
 
-        $query = "INSERT INTO tb_members (usernr,type, fullname, organization, street, zip, city, country, cellphone, telephone, instagram, facebook, website) VALUES ('{$usernr}', '', '{$name}', '', '','', '', '', '', '', '', '', '')";
+        $query = "INSERT INTO tb_members (usernr,type, fullname, organization, street, zip, city, country, cellphone, telephone, instagram, facebook, website, active, sendout) VALUES ('{$usernr}', '', '{$name}', '', '','', '', '', '', '', '', '', '', '0', '0')";
         return mysqli_query($conn, $query);
     } else {
         return false;
@@ -84,24 +83,28 @@ function send_email($email, $code, $for)
 
     try {
         // Server settings
+        // send@hopeforevangelism.com
+        // SMTP: send.one.com
+        // Port: 465
+        // Passwd: aB12!skou(0_ns
         $mail->SMTPDebug = 0;
         $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';
+        $mail->Host = 'send.one.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'golden.starr1997@gmail.com';
-        $mail->Password = 'zlrn ooiv lyfo egxb';
+        $mail->Username = 'send@hopeforevangelism.com';
+        $mail->Password = 'aB12!skou(0_ns';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         $mail->Port = 465;
 
-        $mail->setFrom('golden.starr1997@gmail.com');
+        $mail->setFrom('send@hopeforevangelism.com');
         $mail->addAddress($email);
 
         $mail->isHTML(true);
 
         if ($for == 'reset_pwd') {
             $mail->Subject = 'Reset password verfiy';
-            $mail->Body = 'Here is the verification link <b><a href="http://localhost/change-password.php?reset='
-                . $code . '">http://localhost/change-password.php?reset='
+            $mail->Body = 'Here is the verification link <b><a href="{'.DOMAIN.'}change-password.php?reset='
+                . $code . '">{'.DOMAIN.'}change-password.php?reset='
                 . $code . '</a></b>';
         } else {
             $mail->Subject = 'Register verfiy';
@@ -132,7 +135,7 @@ function select_userByEmail($conn, $email)
 
 function select_userById($conn, $id)
 {
-    $query = "SELECT * FROM tb_users CROSS JOIN tb_members ON tb_users.usernr = tb_members.usernr WHERE tb_users.usernr = '{$id}'";
+    $query = "SELECT * FROM tb_users INNER JOIN tb_members ON tb_users.usernr = tb_members.usernr WHERE tb_users.usernr = '{$id}'";
     return mysqli_query($conn, $query);
 }
 
@@ -207,12 +210,21 @@ function addConvert($conn, $email, $fullname, $street, $zip, $city, $country, $c
 }
 
 function select_members( $conn, $s_type, $s_fullname, $s_organization, $s_zip, $s_city, $s_country ){
-    $query = "SELECT * FROM tb_users CROSS JOIN tb_members ON tb_users.usernr = tb_members.usernr WHERE tb_users.active = '1' AND tb_members.fullname LIKE '%{$s_fullname}%' AND tb_members.zip LIKE '%{$s_zip}%' AND tb_members.type LIKE '%{$s_type}%' AND tb_members.organization LIKE '%{$s_organization}%' AND tb_members.city LIKE '%{$s_city}%' AND tb_members.country LIKE '%{$s_country}%'";
+    $query = "SELECT * FROM tb_users JOIN tb_members ON tb_users.usernr = tb_members.usernr WHERE tb_users.active = '1' AND tb_members.fullname LIKE '%{$s_fullname}%' AND tb_members.zip LIKE '%{$s_zip}%' AND tb_members.type LIKE '%{$s_type}%' AND tb_members.organization LIKE '%{$s_organization}%' AND tb_members.city LIKE '%{$s_city}%' AND tb_members.country LIKE '%{$s_country}%'";
+    return mysqli_query($conn, $query);
+}
+
+function select_newBorn($conn, $usernr, $newBornnr){
+    $query = "SELECT * FROM tb_connection WHERE usernr1={$usernr} AND usernr2={$newBornnr} AND status='1'";
+
     return mysqli_query($conn, $query);
 }
 
 function select_events($conn, $sname, $sorg, $szip, $scity, $scountry, $sstartDate, $sendDate){
     $query = "SELECT * FROM tb_event CROSS JOIN tb_members ON tb_event.usernr = tb_members.usernr CROSS JOIN tb_users ON tb_event.usernr = tb_users.usernr WHERE tb_users.active = '1' AND tb_event.name LIKE '%{$sname}%' AND tb_members.organization LIKE '%{$sorg}%' AND tb_event.zip LIKE '%{$szip}%' AND tb_event.city LIKE '%{$scity}%' AND tb_event.country LIKE '%{$scountry}%'";
+    if($sstartDate && $sendDate){
+        $query .= "AND tb_event.dateofevent BETWEEN '{$sstartDate}' AND '{$sendDate}'";
+    }
     return mysqli_query($conn, $query);
 }
  
@@ -276,5 +288,21 @@ function update_connect($conn, $usernr1, $usernr2){
 function delete_connect($conn, $usernr1, $usernr2){
     $query = "UPDATE tb_connection SET tb_connection.status = '2' WHERE tb_connection.usernr2='{$usernr2}' AND tb_connection.usernr1='{$usernr1}'";
     return mysqli_query($conn, $query);
+}
+
+// Add Convert
+function logic_AddConvert($conn, $email, $whatsapp, $usernr){
+    if($email){
+        // send email
+    } else {
+        $code = "";
+        if($whatsapp && $code){
+            // send email
+        } else {
+            // tb_connection = "S"
+        }
+    }
+
+    // search church by zip @tb_connection = 0
 }
 ?>

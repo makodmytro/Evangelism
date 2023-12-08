@@ -16,7 +16,12 @@ try {
     //throw $th;
     $msg = "<div class='alert alert-danger'>'{$th->getMessage()}'</div>";
 }
-$s_type = ""; $s_fullname = ""; $s_organization = ""; $s_zip = ""; $s_city = ""; $s_country = "";
+$s_type = "";
+$s_fullname = "";
+$s_organization = "";
+$s_zip = "";
+$s_city = "";
+$s_country = "";
 
 try {
     $res = select_members($conn, $s_type, $s_fullname, $s_organization, $s_zip, $s_city, $s_country);
@@ -43,6 +48,7 @@ if (isset($_POST['submit'])) {
 <section class="container h-100">
     <?php include 'inc/top.php' ?>
     <div class="main-container pt-5">
+
         <?= $msg ?>
         <div class="border border-1 border-solid pt-4 pb-4 position-relative">
             <button class="btn btn-primary position-absolute" data-bs-toggle="modal" data-bs-target="#addFilterModal"
@@ -54,30 +60,39 @@ if (isset($_POST['submit'])) {
             <div class="mt-3">
                 <?php $lop = 0;
                 if ($res->num_rows > 0) {
-                while ($row = $res->fetch_assoc()) {
-                    $lop = $lop + 1; ?>
-                    <div class="member-container <?= $lop % 2 == 1 ? 'bg-primary text-white' : ''; ?>">
-                        <div class="member-image cursor-pointer" onclick="gotoMemberDetail(<?= $row['usernr'] ?>)"><img src="assets/images/member.png" alt=""></div>
-                        <div class="member-info">
-                            <div>
-                                <?= $row["fullname"] ?>
+                    while ($row = $res->fetch_assoc()) {
+                        $type = explode(',', $row['type'])[0];
+                        if($type == "newBorn") {
+                            $res_newborn = select_newBorn($conn, $_SESSION["usernr"], $row["usernr"]);
+                            if($res_newborn->num_rows > 0) {
+                            } else {
+                                continue;
+                            }
+                        }
+                        $lop = $lop + 1; ?>
+                        <div class="member-container <?= $lop % 2 == 1 ? 'bg-primary text-white' : ''; ?>">
+                            <div class="member-image cursor-pointer" onclick="gotoMemberDetail(<?= $row['usernr'] ?>)"><img
+                                    src="assets/images/member.png" alt=""></div>
+                            <div class="member-info">
+                                <div>
+                                    <?= $row["fullname"] ?>
+                                </div>
+                                <div>
+                                    <?= $row["zip"] ?>
+                                </div>
+                                <div>
+                                    <?= $row["city"] ?>
+                                </div>
+                                <div>
+                                    <?= strtoupper($row["country"]) ?>
+                                </div>
+                                <div>
+                                    <?= $row["cellphone"] ?>
+                                </div>
                             </div>
-                            <div>
-                                <?= $row["zip"] ?>
-                            </div>
-                            <div>
-                                <?= $row["city"] ?>
-                            </div>
-                            <div>
-                                <?= strtoupper($row["country"]) ?>
-                            </div>
-                            <div>
-                                <?= $row["cellphone"] ?>
-                            </div>
-                            
                         </div>
-                    </div>
-                <?php }} else { ?>
+                    <?php }
+                } else { ?>
 
                 <?php } ?>
             </div>
@@ -154,10 +169,10 @@ if (isset($_POST['submit'])) {
 <script>
     function gotoMemberDetail(usernr) {
         window.location.href = '<?= DOMAIN . "/member-detail.php?usernr=" ?>' + usernr;
-    }   
+    }
 
     function clearHandle() {
-        window.location.href = "<?= DOMAIN ?>/search-event.php"
+        window.location.href = "<?= DOMAIN ?>/search-members.php"
     }  
 </script>
 

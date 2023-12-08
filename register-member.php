@@ -1,11 +1,9 @@
-<?php $navTitle = "Edit Profile"; ?>
 <?php
+$navTitle = "Edit Profile";
 include 'inc/header.php';
 include 'inc/nav.php';
 include 'inc/country.php';
-
 $msg = "";
-
 try {
     $types = select_types($conn);
 } catch (\Throwable $th) {
@@ -21,7 +19,7 @@ if (mysqli_num_rows($result) > 0) {
     echo "0 results";
 }
 
-if (isset($_POST['submit'])) {
+if (isset($_POST['register'])) {
     $type = mysqli_real_escape_string($conn, $_POST['type']);
     $fullname = mysqli_real_escape_string($conn, $_POST['fullname']);
     $organization = mysqli_real_escape_string($conn, $_POST['organization']);
@@ -122,7 +120,7 @@ if (isset($_POST['submit'])) {
                 <div class="col-lg-4 col-md-12 border border-1 border-solid px-4 pt-3 pb-3 mb-5 text-break">
                     <select type="text" class="form-control mt-3" name="type" style="padding: 12px" required>
                     <?php while($row1 = $types->fetch_assoc()) { ?>
-                        <option value="church" <?php echo ($row1["type"] == 'Church') ? 'selected' : ''; ?>><?= $row1["descript"] ?> (<?= strtoupper($row1["langu"]) ?>)</option>
+                        <option value="<?= $row1['type'] . ',' . strtoupper($row1['langu']) ?>" <?php echo ($row1["type"] == $row1["descript"] . ',' . strtoupper($row1["langu"])) ? 'selected' : ''; ?>><?= $row1["descript"] ?> (<?= strtoupper($row1["langu"]) ?>)</option>
                     <?php } ?>
                     </select>
                     <input type="text" class="form-control mt-3" name="fullname" placeholder="Enter Your Full Name" value="<?= $row["fullname"] ?>">
@@ -131,7 +129,7 @@ if (isset($_POST['submit'])) {
                     <input type="password" class="form-control mt-3" name="password" placeholder="Enter Your Password">
                     <input type="password" class="form-control mt-3" name="confirm_password"
                         placeholder="Enter Your Retype Password">
-                    <button name="submit" class="btn btn-primary mt-5 w-100" type="submit">Seve Data</button>
+                    <button name="register" class="btn btn-primary mt-5 w-100" type="submit">Seve Data</button>
                 </div>
             </div>
         </form>

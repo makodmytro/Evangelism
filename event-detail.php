@@ -51,7 +51,7 @@ if (isset($_POST["addme"])) {
     } catch (\Throwable $th) {
         $msg = "<div class='alert alert-danger'>{$th->getMessage()}</div>";
     }
-    header("Location: event-detail.php?eventnr=".$eventnr);
+    header("Location: event-detail.php?eventnr=" . $eventnr);
 }
 
 if (isset($_POST["removeme"])) {
@@ -65,10 +65,10 @@ if (isset($_POST["removeme"])) {
     } catch (\Throwable $th) {
         $msg = "<div class='alert alert-danger'>{$th->getMessage()}</div>";
     }
-    header("Location: event-detail.php?eventnr=".$eventnr);
+    header("Location: event-detail.php?eventnr=" . $eventnr);
 }
 
-if(isset($_POST["whoiscomming"])) {
+if (isset($_POST["whoiscomming"])) {
     try {
         $res_eventmembers = select_eventMembers($conn, $eventnr);
     } catch (\Throwable $th) {
@@ -165,8 +165,8 @@ if(isset($_POST["whoiscomming"])) {
                     </div>
                 </button>
                 <form action="" method="post"></form>
-                <button type="submit" name="whoiscomming" class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal"
-                    data-bs-target="#memberModal">
+                <button type="submit" name="whoiscomming" class="btn btn-default mx-auto w-75 mt-1 mb-1"
+                    data-bs-toggle="modal" data-bs-target="#memberModal">
                     <div class="d-flex justify-content-center">
                         <div>
                             <img src='<?php echo DOMAIN . "/assets/images/comming.png"; ?>' alt="" />
@@ -176,7 +176,8 @@ if(isset($_POST["whoiscomming"])) {
                         </div>
                     </div>
                 </button>
-                <button class="btn btn-default mx-auto w-75 mt-1 mb-1" onclick="gotoMemberDetail(<?= $detail_event['usernr'] ?>)">
+                <button class="btn btn-default mx-auto w-75 mt-1 mb-1"
+                    onclick="gotoMemberDetail(<?= $detail_event['usernr'] ?>)">
                     <div class="d-flex justify-content-center">
                         <div>
                             <img src='<?php echo DOMAIN . "/assets/images/member.png"; ?>' alt="" />
@@ -187,18 +188,32 @@ if(isset($_POST["whoiscomming"])) {
                     </div>
                 </button>
                 <div class="d-flex justify-content-between w-75 mx-auto">
-                    <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
-                        <img src="assets/images/world.png" alt="" style="width: 30px">
-                    </button>
-                    <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
-                        <img src="assets/images/facebook.png" alt="" style="width: 30px">
-                    </button>
-                    <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
-                        <img src="assets/images/instagram.png" alt="" style="width: 30px">
-                    </button>
-                    <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
-                        <img src="assets/images/delete.png" alt="" style="width: 30px">
-                    </button>
+                    <?php if ($detail_event["website"]) { ?>
+                        <a href="<?= $detail_event["website"] ?>" target="_blank">
+                        <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
+                            <img src="assets/images/world.png" alt="" style="width: 30px">
+                        </button>
+                        </a>
+                    <?php } ?>
+                    <?php if ($detail_event["facebook"]) { ?>
+                        <a href="<?= $detail_event["facebook"] ?>" target="_blank">
+                        <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
+                            <img src="assets/images/facebook.png" alt="" style="width: 30px">
+                        </button>
+                        </a>
+                    <?php } ?>
+                    <?php if ($detail_event["instagram"]) { ?>
+                        <a href="<?= $detail_event["instagram"] ?>" target="_blank">
+                        <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
+                            <img src="assets/images/instagram.png" alt="" style="width: 30px">
+                        </button>
+                        </a>
+                    <?php } ?>
+                    <?php if ($_SESSION["admin"]) { ?>
+                        <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
+                            <img src="assets/images/delete.png" alt="" style="width: 30px">
+                        </button>
+                    <?php } ?>
                 </div>
             </div>
         </div>

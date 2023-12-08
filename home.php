@@ -15,6 +15,8 @@
             if($res){
                 $user = mysqli_fetch_assoc($res);
                 $_SESSION["usernr"] = $user["usernr"];
+                $_SESSION["admin"] = $user["admin"];
+                $_SESSION["type"] = $user["type"];
             }
         } catch (\Throwable $th) {
             $msg = "<div class='alert alert-danger'>{$th->getMessage()}</div>";
@@ -25,8 +27,8 @@
 <section class="container h-100">
     <?php include 'inc/top.php' ?>
     <div class="main-container d-flex justify-content-center align-items-center">
+        <?= $msg ?>
         <div class="row w-100">
-            <?= $msg ?>
             <div class="col-md-4 col-sm-12">
                 <a href="evangelise.php">
                     <button class="btn btn-primary w-100 mt-5 mb-5 h-50">
@@ -41,20 +43,22 @@
                     </button>
                 </a>
             </div>
-            <div class="col-md-4 col-sm-12">
-                <a href="add-convert.php">
-                    <button class="btn btn-primary w-100 mt-5 mb-5 h-50">
-                        <div class="d-flex justify-content-center">
-                            <div>
-                                <img src="<?= DOMAIN ?>/assets/images/home2.png" alt="">
+            <?php if($_SESSION["type"] == "Evangelist,DEUTSCH" || $_SESSION["type"] == "Evangelist,ENGLISH" || $_SESSION["admin"]) {?>
+                <div class="col-md-4 col-sm-12">
+                    <a href="add-convert.php">
+                        <button class="btn btn-primary w-100 mt-5 mb-5 h-50">
+                            <div class="d-flex justify-content-center">
+                                <div>
+                                    <img src="<?= DOMAIN ?>/assets/images/home2.png" alt="">
+                                </div>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    Add Convert
+                                </div>
                             </div>
-                            <div class="d-flex justify-content-center align-items-center">
-                                Add Convert
-                            </div>
-                        </div>
-                    </button>
-                </a>
-            </div>
+                        </button>
+                    </a>
+                </div>
+            <?php } ?>
             <div class="col-md-4 col-sm-12">
                 <a href="search-members.php">
                     <button class="btn btn-primary w-100 mt-5 mb-5 h-50">

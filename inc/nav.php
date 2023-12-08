@@ -1,6 +1,7 @@
 <?php
     if(!$_SESSION["fullname"]){
         header("Location: index.php");
+        exit();
     }
 ?>
 <nav class="navbar bg-primary text-white position-fixed w-100">

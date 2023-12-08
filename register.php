@@ -32,16 +32,16 @@ if (isset($_POST['submit'])) {
       $msg = "<div class='alert alert-danger'>{$email} - This email address already exists.</div>";
     } else {
       if ($password === $confirm_password) {
-        // if (send_email($email, $code, 'verify')) {
+        if (send_email($email, $code, 'verify')) {
           if (registerUser($conn, $name, $email, $password, $code)) {
             $msg = "<div class='alert alert-info'>We've sent a verification link to your email address.</div>";
             $_SESSION['usernr'] = $conn->insert_id;
           } else {
             $msg = "<div class='alert alert-danger'>Something went wrong during registration.</div>";
           }
-        // } else {
-        //   $msg = "<div class='alert alert-danger'>Failed to send verification email.</div>";
-        // }
+        } else {
+          $msg = "<div class='alert alert-danger'>Failed to send verification email.</div>";
+        }
       } else {
         $msg = "<div class='alert alert-danger'>Password and Confirm Password do not match</div>";
       }
@@ -52,38 +52,40 @@ if (isset($_POST['submit'])) {
 ?>
 
 <section class="container h-100">
-    <div class="d-flex justify-content-center align-items-center h-100">
-        <div class="d-flex gap-5">
-            <div class="w-50 d-flex justify-content-center align-items-center bg-primary">
-                <img src="assets/images/logo.png" alt="" class="w-75">
-            </div>
-            <div class="w-50 pt-3 pb-3">
-                <h2>Register Now</h2>
-                <p class="mt-3 mb-3">Plese fill these fields.. </p>
-                <?php echo $msg; ?>
-                <form action="" method="post">
-                    <input type="text" class="form-control mt-3" name="name" placeholder="Enter Your Name"
-                        value="<?php if (isset($_POST['submit'])) { echo $name; } ?>" required>
-                    <input type="email" class="form-control mt-3" name="email" placeholder="Enter Your Email"
-                        value="<?php if (isset($_POST['submit'])) { echo $email; } ?>" required>
-                    <input type="password" class="form-control mt-3" name="password" placeholder="Enter Your Password" required>
-                    <input type="password" class="form-control mt-3" name="confirm-password"
-                        placeholder="Enter Your Confirm Password" required>
-                        <div class="form-check mt-5">
-                        <input class="form-check-input" type="checkbox" name="policy" value="" id="flexCheckDefault"
-                            required>
-                        <label class="form-check-label" for="flexCheckDefault">
-                            I agree
-                        </label>
-                    </div>
-                    <div>
-                        <?= $legal_text["legal_text"] ?>
-                    </div>
-                    <button name="submit" class="btn btn-primary mt-5 w-100" type="submit">Register</button>
-                </form>
-                <p class="mt-3 text-center">Have an account!&nbsp;&nbsp;&nbsp;<a href="index.php">Login</a>.</p>
-            </div>
-        </div>
+  <div class="d-flex justify-content-center align-items-center h-100">
+    <div class="d-flex gap-5">
+      <div class="w-50 d-flex justify-content-center align-items-center bg-primary">
+        <img src="assets/images/logo.png" alt="" class="w-75">
+      </div>
+      <div class="w-50 pt-3 pb-3">
+        <h2>Register Now</h2>
+        <?php echo $msg; ?>
+        <form action="" method="post">
+          <input type="text" class="form-control mt-3" name="name" placeholder="Enter Your Name"
+            value="<?php if (isset($_POST['submit'])) {
+              echo $name;
+            } ?>" required>
+          <input type="email" class="form-control mt-3" name="email" placeholder="Enter Your Email"
+            value="<?php if (isset($_POST['submit'])) {
+              echo $email;
+            } ?>" required>
+          <input type="password" class="form-control mt-3" name="password" placeholder="Enter Your Password" required>
+          <input type="password" class="form-control mt-3" name="confirm-password"
+            placeholder="Enter Your Confirm Password" required>
+          <div class="form-check mt-5">
+            <input class="form-check-input" type="checkbox" name="policy" value="" id="flexCheckDefault" required>
+            <label class="form-check-label" for="flexCheckDefault">
+              I agree
+            </label>
+          </div>
+          <div>
+            <?= $legal_text["legal_text"] ?>
+          </div>
+          <button name="submit" class="btn btn-primary mt-5 w-100" type="submit">Register</button>
+        </form>
+        <p class="mt-3 text-center">Have an account!&nbsp;&nbsp;&nbsp;<a href="index.php">Login</a>.</p>
+      </div>
     </div>
+  </div>
 </section>
 <?php include 'inc/footer.php' ?>
