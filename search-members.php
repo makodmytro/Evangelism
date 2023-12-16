@@ -12,7 +12,7 @@ $s_fullname = "      ";
 $s_zip = "     ";
 
 try {
-    $types = select_types($conn);
+    $types = select_types_eng($conn);
 } catch (\Throwable $th) {
     //throw $th;
     $msg = "<div class='alert alert-danger'>'{$th->getMessage()}'</div>";
@@ -123,8 +123,7 @@ if (isset($_POST['submit'])) {
                                         <option value="" selected disabled>User Type</option>
                                         <?php while ($row1 = $types->fetch_assoc()) { ?>
                                             <option value="church">
-                                                <?= $row1["descript"] ?> (
-                                                <?= strtoupper($row1["langu"]) ?>)
+                                                <?= $row1["descript"] ?>
                                             </option>
                                         <?php } ?>
                                     </select>
