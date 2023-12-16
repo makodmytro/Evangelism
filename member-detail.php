@@ -74,7 +74,7 @@ if (isset($_POST["memberConnect"])) {
 if (isset($_POST["member_send_email"])) {
     $subject = isset($_POST['subject']) ? $_POST['subject'] : '';
     $content = isset($_POST['content']) ? $_POST['content'] : '';
-    send_email($conn, $e_user['email'], 0, 'member_send_email', $subject, $content, $siteLanguage);
+    send_email($conn, $e_user['email'], $_SESSION['usernr'], 'member_send_email', $subject, $content, $siteLanguage);
 }
 
 if (isset($_POST["send_whatsapp"])) {

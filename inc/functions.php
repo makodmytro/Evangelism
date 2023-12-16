@@ -112,8 +112,11 @@ function send_email($conn, $email, $code, $for, $subject, $content, $lang)
 
         $mail->isHTML(true);
 
-        $query = "SELECT * FROM tb_users WHERE email='{$email}'";
+        $query = "SELECT * FROM tb_users JOIN tb_members ON tb_users.usernr = tb_members.usernr WHERE tb_users.email = '{$email}';";
         $result = mysqli_fetch_assoc(mysqli_query($conn, $query));
+
+        $query = "SELECT * FROM tb_users JOIN tb_members ON tb_users.usernr = tb_members.usernr WHERE tb_users.usernr = '{$code}'";
+        $result1 = mysqli_fetch_assoc(mysqli_query($conn, $query));
 
         if ($for == 'reset_pwd') {
             $verifyContent = mysqli_fetch_assoc(get_email_txt($conn, 'changepassword', $lang))['txt'];
@@ -137,7 +140,9 @@ function send_email($conn, $email, $code, $for, $subject, $content, $lang)
         } else {
             $verifyContent = mysqli_fetch_assoc(get_email_txt($conn, 'sendemail', $lang))['txt'];
             $verifyContent = str_replace("SUBJECT", $subject, $verifyContent);
-            $verifyContent = str_replace("MESSAGEContent", $content, $verifyContent);
+            $verifyContent = str_replace("MESSAGE", $content, $verifyContent);
+            $verifyContent = str_replace("FROMWHO", "Name: ".$result1['fullname'].", Zipcode: ". $result1['zip'] .", City: ".$result1['city'].", Country: ".$result1['country'], $verifyContent);
+            $verifyContent = str_replace("SHOWMEMBERDETAILS", "https://www.hopeforevangelism.com/evangel/member-detail.php?usernr=".$code, $verifyContent);
             $mail->Subject = $subject;
             $mail->Body = $verifyContent;
         }
