@@ -112,7 +112,8 @@ function send_email($conn, $email, $code, $for, $subject, $content, $lang)
 
         $mail->isHTML(true);
 
-        $usernr = mysqli_query($conn, "SELECT * FROM tb_users WHERE email='{$email}'");
+        $query = "SELECT * FROM tb_users WHERE email='{$email}'";
+        $result = mysqli_fetch_assoc(mysqli_query($conn, $query));
 
         if ($for == 'reset_pwd') {
             $verifyContent = mysqli_fetch_assoc(get_email_txt($conn, 'changepassword', $lang))['txt'];
@@ -122,7 +123,7 @@ function send_email($conn, $email, $code, $for, $subject, $content, $lang)
         } else if ($for == 'verify') {
             $verifyContent = mysqli_fetch_assoc(get_email_txt($conn, 'register', $lang))['txt'];
             $verifyContent = str_replace("THEVERIFYLINK", "https://www.hopeforevangelism.com/evangel/?verification=" . $code, $verifyContent);
-            // $verifyContent = str_replace("REMOVEMELINK", "https://www.hopeforevangelism.com/evangel/remove-me.php?usernr=" . $usernr['usernr'], $verifyContent);
+            $verifyContent = str_replace("REMOVEMELINK", "https://www.hopeforevangelism.com/evangel/remove-me.php?usernr=" . $result['usernr'], $verifyContent);
             $mail->Subject = 'Register verfiy';
             $mail->Body = $verifyContent;
         } else if ($for == 'connect') {
