@@ -118,6 +118,7 @@ function send_email($conn, $email, $code, $for, $subject, $content, $lang)
         if ($for == 'reset_pwd') {
             $verifyContent = mysqli_fetch_assoc(get_email_txt($conn, 'changepassword', $lang))['txt'];
             $verifyContent = str_replace("THEVERIFYLINK", "https://www.hopeforevangelism.com/evangel/change-password.php?reset=" . $code, $verifyContent);
+            $verifyContent = str_replace("REMOVEMELINK", "https://www.hopeforevangelism.com/evangel/remove-me.php?usernr=" . $result['usernr'], $verifyContent);
             $mail->Subject = 'Reset password verfiy';
             $mail->Body = $verifyContent;
         } else if ($for == 'verify') {
