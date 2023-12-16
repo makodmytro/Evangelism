@@ -38,7 +38,7 @@ if (isset($_POST['submit'])) {
     $s_zip = $_POST["zip"];
     $s_city = mysqli_real_escape_string($conn, $_POST["city"]);
     $s_country = mysqli_real_escape_string($conn, $_POST["country"]);
-    
+
     if (isset($_POST['myCheckbox'])) {
         $res = select_membersToMe($conn, $s_type, $s_fullname, $s_organization, $s_zip, $s_city, $s_country);
         $s_connected = 1;
@@ -57,13 +57,13 @@ if (isset($_POST['submit'])) {
         <div class="border border-1 border-solid pt-4 pb-4 position-relative">
             <button class="btn btn-primary position-absolute" data-bs-toggle="modal" data-bs-target="#addFilterModal" style="top: -20px; left: 10px">Filters</button>
             <div class="mt-2 ms-5">
-                <?php if($s_type) { ?>Type:&nbsp;<?= $s_type ?>&nbsp;&nbsp;&nbsp;<?php } ?>
-                <?php if($s_fullname) { ?>Fullname:&nbsp;<?= $s_fullname ?>&nbsp;&nbsp;&nbsp;<?php } ?>
-                <?php if($s_organization) { ?>Organization:&nbsp;<?= $s_organization ?>&nbsp;&nbsp;&nbsp;<?php } ?>
-                <?php if($s_zip) { ?>Zip code:&nbsp;<?= $s_zip ?>&nbsp;&nbsp;&nbsp;<?php } ?>
-                <?php if($s_city) { ?>City:&nbsp;<?= $s_city ?>&nbsp;&nbsp;&nbsp;<?php } ?>
-                <?php if($s_country) { ?>Country:&nbsp;<?= $s_country ?>&nbsp;&nbsp;&nbsp;<?php } ?>
-                <?php if($s_connected) { ?>Connected Members<?php } ?>
+                <?php if ($s_type) { ?>Type:&nbsp;<?= $s_type ?>&nbsp;&nbsp;&nbsp;<?php } ?>
+                <?php if ($s_fullname) { ?>Fullname:&nbsp;<?= $s_fullname ?>&nbsp;&nbsp;&nbsp;<?php } ?>
+                <?php if ($s_organization) { ?>Organization:&nbsp;<?= $s_organization ?>&nbsp;&nbsp;&nbsp;<?php } ?>
+                <?php if ($s_zip) { ?>Zip code:&nbsp;<?= $s_zip ?>&nbsp;&nbsp;&nbsp;<?php } ?>
+                <?php if ($s_city) { ?>City:&nbsp;<?= $s_city ?>&nbsp;&nbsp;&nbsp;<?php } ?>
+                <?php if ($s_country) { ?>Country:&nbsp;<?= $s_country ?>&nbsp;&nbsp;&nbsp;<?php } ?>
+                <?php if ($s_connected) { ?>Connected Members<?php } ?>
             </div>
             <div class="mt-3">
                 <?php $lop = 0;
@@ -79,19 +79,23 @@ if (isset($_POST['submit'])) {
                         }
                         $lop = $lop + 1; ?>
                         <div class="member-container <?= $lop % 2 == 1 ? 'bg-primary text-white' : ''; ?>">
-                            <div class="member-image cursor-pointer" onclick="gotoMemberDetail(<?= $row['usernr'] ?>)"><img src="assets/images/member.png" alt=""></div>
+                            <div class="member-image cursor-pointer" onclick="gotoMemberDetail(<?= $row['usernr'] ?>)">
+                                <div>
+                                    <img src="assets/images/member.png" alt="">
+                                </div>
+                            </div>
                             <div class="member-info">
                                 <div>
-                                    <?= $row["fullname"] ?>
+                                    <?= $row["fullname"] ?>-
                                 </div>
                                 <div>
-                                    <?= $row["zip"] ?>
+                                    <?= $row["zip"] ?>,
                                 </div>
                                 <div>
-                                    <?= $row["city"] ?>
+                                    <?= $row["city"] ?>,
                                 </div>
                                 <div>
-                                    <?= strtoupper($row["country"]) ?>
+                                    <?= strtoupper($row["country"]) ?>,
                                 </div>
                                 <div>
                                     <?= $row["cellphone"] ?>
