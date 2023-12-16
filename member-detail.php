@@ -1,4 +1,4 @@
-<?php include 'inc/header.php' ?>
+<?php include 'inc/pre.php' ?>
 <?php $navTitle = "Member Details"; ?>
 <?php include 'inc/nav.php' ?>
 <?php
@@ -48,53 +48,86 @@ if (isset($_POST["active"])) {
     }
 }
 
-if (isset($_POST["disconnect"])) {
-    try {
-        $res_conn = delete_connect($conn, $_SESSION["usernr"], $m_usernr);
-        try {
-            $res_connect = select_connectMembers($conn, $_SESSION['usernr'], $m_usernr);
-            $conn_stt = $res_connect->num_rows == 0 ? false : true;
-            if ($conn_stt) {
-                $sql_stt = mysqli_fetch_assoc($res_connect)['status'] == 1 ? true : false;
-            }
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
-    } catch (\Throwable $th) {
-        $msg = "<div class='alert alert-danger'>{$th->getMessage()}</div>";
+if (isset($_POST["memberDisconnect"])) {
+    delete_connectMembers($conn, $_SESSION['usernr'], $m_usernr);
+    
+    $res_connect = select_connectMembers($conn, $_SESSION['usernr'], $m_usernr);
+    $conn_stt = $res_connect->num_rows == 0 ? false : true;
+    if ($conn_stt) {
+        $sql_stt = mysqli_fetch_assoc($res_connect)['status'] == 1 ? true : false;
     }
 }
 
-if (isset($_POST["connect"])) {
-    try {
-        if ($conn_stt) {
-            $res_conn = update_connect($conn, $_SESSION["usernr"], $m_usernr);
-        } else {
-            $res_conn = create_connect($conn, $_SESSION["usernr"], $m_usernr);
-        }
-        try {
-            $res_connect = select_connectMembers($conn, $_SESSION['usernr'], $m_usernr);
-            $conn_stt = $res_connect->num_rows == 0 ? false : true;
-            if ($conn_stt) {
-                $sql_stt = mysqli_fetch_assoc($res_connect)['status'] == 1 ? true : false;
-            }
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
-    } catch (\Throwable $th) {
-        $msg = "<div class='alert alert-danger'>{$th->getMessage()}</div>";
+if (isset($_POST["memberConnect"])) {
+    // add connect to the tb_connect
+    insert_connectMember($conn, $_SESSION['usernr'], $m_usernr, 10, 0);
+
+    // get connect status
+    $res_connect = select_connectMembers($conn, $_SESSION['usernr'], $m_usernr);
+    $conn_stt = $res_connect->num_rows == 0 ? false : true;
+    if ($conn_stt) {
+        $sql_stt = mysqli_fetch_assoc($res_connect)['status'] == 1 ? true : false;
     }
+    send_email($conn, $e_user['email'], 0, 'connect', $_SESSION, '', $siteLanguage);
 }
+
+if (isset($_POST["member_send_email"])) {
+    $subject = isset($_POST['subject']) ? $_POST['subject'] : '';
+    $content = isset($_POST['content']) ? $_POST['content'] : '';
+    send_email($conn, $e_user['email'], 0, 'member_send_email', $subject, $content, $siteLanguage);
+}
+
+if (isset($_POST["send_whatsapp"])) {
+    $apiUrl = 'https://api.gupshup.io/sm/api/v1/msg';
+    $apiKey = 'CkNLmwa1x4HL';
+    $requestBody = [
+        'channel' => 'whatsapp',
+        'source' => '381612652757',
+        'destination' => '381612652757',
+        'src.name' => 'DemoApp',
+        'message' => [
+            'type' => 'text',
+            'text' => 'Hi John, how are you?',
+        ],
+    ];
+    $headers = [
+        'Content-Type: application/x-www-form-urlencoded',
+        'apikey: ' . $apiKey,
+    ];
+
+    // Construct the request options
+    $options = [
+        'http' => [
+            'method'  => 'POST',
+            'header'  => implode("\r\n", $headers),
+            'content' => http_build_query(['message' => $requestBody]),
+        ],
+    ];
+
+    // Create a stream context
+    $context = stream_context_create($options);
+
+    // Make the POST request
+    $response = file_get_contents($apiUrl, false, $context);
+
+    // Check for errors
+    if ($response === false) {
+        die('Error making POST request');
+    }
+
+    // Process the response data
+    $data = json_decode($response, true);
+}
+
 ?>
+<?php include 'inc/header.php' ?>
 
 <section class="container h-100">
     <?php include 'inc/top.php' ?>
     <div class="main-container pt-5">
         <?= $msg ?>
         <div class="map-container">
-            <div class="border border-1 border-solid map-content">
-                <img src="assets/images/map.png" alt="" class="w-100">
-            </div>
+            <div class="border border-1 border-solid map-content" id="map"></div>
             <div class="member-detail pt-0 pb-3 text-white text-center">
                 <h2 class="mb-0 pt-3">Church</h2>
                 <hr>
@@ -119,47 +152,55 @@ if (isset($_POST["connect"])) {
                     <?= $e_user['telephone'] ?>
                 </h6>
                 <hr>
-                <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal"
-                    data-bs-target="#emailModal">
+                <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#emailModal">
                     <div class="d-flex justify-content-center">
                         <div>
                             <img src="<?= DOMAIN ?>/assets/images/email.png" alt="">
                         </div>
                         <div class="d-flex justify-content-center align-items-center">
-                            Email
+                            &nbsp;&nbsp;&nbsp;Email
                         </div>
                     </div>
                 </button>
-                <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal"
-                    data-bs-target="#whatsappModal">
-                    <div class="d-flex justify-content-center">
-                        <div>
-                            <img src="<?= DOMAIN ?>/assets/images/wapp.png" alt="">
+                <?php if ($e_user['whatsappcode']) { ?>
+                    <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#whatsappModal">
+                        <div class="d-flex justify-content-center">
+                            <div>
+                                <img src="<?= DOMAIN ?>/assets/images/wapp.png" alt="">
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center">
+                                &nbsp;&nbsp;&nbsp;Whatsapp
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-center align-items-center">
-                            Whatsapp
-                        </div>
-                    </div>
-                </button>
+                    </button>
+                <?php } ?>
                 <button class="btn btn-default mx-auto w-75 mt-1 mb-1" onclick="gotoEventPage()">
                     <div class="d-flex justify-content-center">
                         <div>
                             <img src="<?= DOMAIN ?>/assets/images/events.png" alt="">
                         </div>
                         <div class="d-flex justify-content-center align-items-center">
-                            Events
+                            &nbsp;&nbsp;&nbsp;Events
                         </div>
                     </div>
                 </button>
-                <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal"
-                    data-bs-target="#allowModal">
-                    <?php if (!!$sql_stt && $conn_stt && $sql_stt) { ?>
+                <button class="btn btn-default mx-auto w-75 mt-1 mb-1" <?php if(($conn_stt && $sql_stt) || !$conn_stt) { ?> data-bs-toggle="modal" data-bs-target="#allowModal" <?php } ?>>
+                    <?php if ($conn_stt && $sql_stt) { ?>
                         <div class="d-flex justify-content-center">
                             <div>
                                 <img src="<?= DOMAIN ?>/assets/images/connection.png" alt="">
                             </div>
                             <div class="d-flex justify-content-center align-items-center">
-                                Remove
+                                &nbsp;&nbsp;&nbsp;Remove
+                            </div>
+                        </div>
+                    <?php } else if($conn_stt && !$sql_stt) { ?>
+                        <div class="d-flex justify-content-center">
+                            <div>
+                                <img src="<?= DOMAIN ?>/assets/images/connectionOne.png" alt="">
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center">
+                                &nbsp;&nbsp;&nbsp;Remove
                             </div>
                         </div>
                     <?php } else { ?>
@@ -168,20 +209,19 @@ if (isset($_POST["connect"])) {
                                 <img src="<?= DOMAIN ?>/assets/images/connection.png" alt="">
                             </div>
                             <div class="d-flex justify-content-center align-items-center">
-                                Connect
+                                &nbsp;&nbsp;&nbsp;Connect
                             </div>
                         </div>
                     <?php } ?>
                 </button>
                 <?php if ($_SESSION["admin"]) { ?>
-                    <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal"
-                        data-bs-target="#activeModal">
+                    <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#activeModal">
                         <div class="d-flex justify-content-center">
                             <div>
                                 <img src="<?= DOMAIN ?>/assets/images/active.png" alt="">
                             </div>
                             <div class="d-flex justify-content-center align-items-center">
-                                <?= $e_user["active"] ?>Activate
+                                &nbsp;&nbsp;&nbsp;<?= $e_user["active"] ?>Activate
                             </div>
                         </div>
                     </button>
@@ -215,36 +255,40 @@ if (isset($_POST["connect"])) {
 
     <div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Send E-mail</h5>
+            <form action="" method="post">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Send E-mail</h5>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" class="form-control mt-3" name="subject" placeholder="subject">
+                        <textarea class="form-control mt-3" rows="5" name="content" placeholder="message"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default px-5" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" name="member_send_email" class="btn btn-default px-5" data-bs-dismiss="modal">Send</button>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <input type="text" class="form-control mt-3" name="subject" placeholder="subject">
-                    <textarea class="form-control mt-3" rows="5" placeholder="message"></textarea>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default px-5" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-default px-5" data-bs-dismiss="modal">Send</button>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
 
     <div class="modal fade" id="whatsappModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Send Whatsapp</h5>
+            <form action="" method="post">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Send Whatsapp</h5>
+                    </div>
+                    <div class="modal-body">
+                        <textarea class="form-control mt-3" rows="5" placeholder="message"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default px-5" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" name="send_whatsapp" class="btn btn-default px-5" data-bs-dismiss="modal">Send</button>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <textarea class="form-control mt-3" rows="5" placeholder="message"></textarea>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default px-5" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-default px-5" data-bs-dismiss="modal">Send</button>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
 
@@ -257,11 +301,11 @@ if (isset($_POST["connect"])) {
                     </div>
                     <div class="modal-footer justify-content-center pt-5 pb-3">
                         <button type="button" class="btn btn-default px-5" data-bs-dismiss="modal">No</button>
-                        <button type="submit" name="<?php if (!!$sql_stt && $conn_stt && $sql_stt) {
-                            echo 'disconnect';
-                        } else {
-                            echo 'connect';
-                        } ?>" class="btn btn-default px-5" data-bs-dismiss="modal">Yes</button>
+                        <button type="submit" <?php if ($conn_stt && $sql_stt) {
+                                                    echo 'name="memberDisconnect"';
+                                                } else {
+                                                    echo 'name="memberConnect"';
+                                                } ?> class="btn btn-default px-5" data-bs-dismiss="modal">Yes</button>
                     </div>
                 </div>
             </form>
@@ -277,11 +321,12 @@ if (isset($_POST["connect"])) {
                     </div>
                     <div class="modal-footer justify-content-center pt-5 pb-3">
                         <button type="button" class="btn btn-default px-5" data-bs-dismiss="modal">No</button>
-                        <button type="submit" name="<?php if ($e_user["active"] == 1) {
-                            echo 'deactive';
-                        } else {
-                            echo 'active';
-                        } ?>" class="btn btn-default px-5" data-bs-dismiss="modal">Yes</button>
+                        <button type="submit" name="<?php
+                                                    if ($e_user["active"] == 1) {
+                                                        echo 'deactive';
+                                                    } else {
+                                                        echo 'active';
+                                                    } ?>" class="btn btn-default px-5" data-bs-dismiss="modal">Yes</button>
                     </div>
                 </div>
             </form>
@@ -294,6 +339,47 @@ if (isset($_POST["connect"])) {
     function gotoEventPage() {
         window.location.href = "<?= DOMAIN ?>/search-event.php?usernr=<?= $m_usernr ?>"
     }
+
+    function initMap() {
+
+        var apiKey = 'AIzaSyBWJPDBXRHjvgNN8DFAOX1VWv63rPvnXD0';
+        var zipCode = <?= $e_user['zip'] ?>;
+        var country = 'Germany';
+
+        // Build the Google Maps Geocoding API request URL
+        var requestUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" + zipCode + "&components=country:" + country + "&key=" + apiKey;
+
+        //define lat, lng value
+        var lat = 20;
+        var lng = 8.37504;
+
+        // Perform the request using fetch
+        fetch(requestUrl)
+            .then(response => {
+                return response.json()
+            })
+            .then(data => {
+                console.log('1')
+                if (data && data.status === 'OK' && data.results.length > 0) {
+                    var center = {
+                        lat: data.results[0].geometry.location.lat,
+                        lng: data.results[0].geometry.location.lng
+                    };
+                    var map = new google.maps.Map(document.getElementById('map'), {
+                        center: center,
+                        zoom: 12 // Adjust the zoom level as needed
+                    });
+                } else {
+                    // Handle errors
+                    console.log("Error geocoding the zip code.");
+                }
+            })
+
+
+
+    }
+
+    initMap();
 </script>
 
 <?php include 'inc/footer.php' ?>

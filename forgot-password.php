@@ -1,3 +1,4 @@
+<?php include 'inc/pre.php' ?>
 <?php
 include 'inc/header.php';
 
@@ -16,7 +17,7 @@ if (isset($_POST['submit'])) {
     $query = mysqli_query($conn, "UPDATE tb_users SET rcode='{$code}' WHERE email='{$email}'");
 
     if ($query) {
-      if (send_email($email, $code, 'reset_pwd')) {
+      if (send_email($conn, $email, $code, 'reset_pwd', '', '', $siteLanguage)) {
         $msg = "<div class='alert alert-info'>We've sent a password reset link to your email address.</div>";
       } else {
         $msg = "<div class='alert alert-danger'>Failed to send password reset email.</div>";
@@ -30,11 +31,11 @@ if (isset($_POST['submit'])) {
 
 <section class="container h-100">
     <div class="d-flex justify-content-center align-items-center h-100">
-        <div class="d-flex gap-5">
-            <div class="w-50 d-flex justify-content-center align-items-center bg-primary">
+        <div class="d-flex gap-5 auth-container">
+            <div class="auth-image justify-content-center align-items-center bg-primary">
                 <img src="assets/images/logo.png" alt="" class="w-75">
             </div>
-            <div class="w-50 pt-3 pb-3">
+            <div class="auth-main pt-3 pb-3">
                 <h2>Forgot Password</h2>
                 <?php echo $msg; ?>
                 <form action="" method="post">

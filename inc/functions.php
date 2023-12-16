@@ -77,7 +77,18 @@ function registerMember($conn, $usernr, $type, $fullname, $organization, $street
     }
 }
 
-function send_email($email, $code, $for)
+function get_email_txt($conn, $type, $lang)
+{
+    
+    $query = "SELECT * FROM tb_email_text WHERE langu = '" . $lang . "' AND type = '" . $type . "' AND ewtype = 'email'";
+    $row = mysqli_query($conn, $query);
+    if (mysqli_num_rows($row) > 0) {
+        return $row;
+    } else {
+        return mysqli_query($conn, "SELECT * FROM tb_email_text WHERE langu = 'en' AND type = '" . $type . "' AND ewtype = 'email'");
+    }
+}
+function send_email($conn, $email, $code, $for, $subject, $content, $lang)
 {
     $mail = new PHPMailer(true);
 
@@ -101,16 +112,32 @@ function send_email($email, $code, $for)
 
         $mail->isHTML(true);
 
+        $usernr = mysqli_query($conn, "SELECT * FROM tb_users WHERE email='{$email}'");
+
         if ($for == 'reset_pwd') {
+            $verifyContent = mysqli_fetch_assoc(get_email_txt($conn, 'changepassword', $lang))['txt'];
+            $verifyContent = str_replace("THEVERIFYLINK", "https://www.hopeforevangelism.com/evangel/change-password.php?reset=" . $code, $verifyContent);
             $mail->Subject = 'Reset password verfiy';
-            $mail->Body = 'Here is the verification link <b><a href="{'.DOMAIN.'}change-password.php?reset='
-                . $code . '">{'.DOMAIN.'}change-password.php?reset='
-                . $code . '</a></b>';
-        } else {
+            $mail->Body = $verifyContent;
+        } else if ($for == 'verify') {
+            $verifyContent = mysqli_fetch_assoc(get_email_txt($conn, 'register', $lang))['txt'];
+            $verifyContent = str_replace("THEVERIFYLINK", "https://www.hopeforevangelism.com/evangel/?verification=" . $code, $verifyContent);
+            // $verifyContent = str_replace("REMOVEMELINK", "https://www.hopeforevangelism.com/evangel/remove-me.php?usernr=" . $usernr['usernr'], $verifyContent);
             $mail->Subject = 'Register verfiy';
-            $mail->Body = 'Here is the verification link <b><a href="' . f_DOMAIN . '/?verification='
-                . $code . '">' . f_DOMAIN . '/?verification='
-                . $code . '</a></b>';
+            $mail->Body = $verifyContent;
+        } else if ($for == 'connect') {
+            $verifyContent = mysqli_fetch_assoc(get_email_txt($conn, 'connect', $lang))['txt'];
+            $verifyContent = str_replace("MEMBERDETAILSContent", "Name: ".$subject['fullname'].", Street: ".$subject['street'].", City: ".$subject['city'].", Country: ".$subject['country'], $verifyContent);
+            $verifyContent = str_replace("SHOWMEMBERDETAILS", "https://www.hopeforevangelism.com/evangel/member-detail.php?usernr=".$subject['usernr'], $verifyContent);
+            $verifyContent = str_replace("CONNECTTOMEMBER", "https://www.hopeforevangelism.com/evangel/accept-connect.php?usernr=".$subject['usernr'], $verifyContent);
+            $mail->Subject = 'Connect Request';
+            $mail->Body = $verifyContent;
+        } else {
+            $verifyContent = mysqli_fetch_assoc(get_email_txt($conn, 'sendemail', $lang))['txt'];
+            $verifyContent = str_replace("SUBJECT", $subject, $verifyContent);
+            $verifyContent = str_replace("MESSAGEContent", $content, $verifyContent);
+            $mail->Subject = $subject;
+            $mail->Body = $verifyContent;
         }
 
         $mail->send();
@@ -141,6 +168,7 @@ function select_userById($conn, $id)
 
 function update_profile($conn, $type, $fullname, $email, $organization, $password, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $usernr)
 {
+    $password = md5($password);
     $query = "UPDATE tb_users
     JOIN tb_members ON tb_users.usernr = tb_members.usernr
     SET 
@@ -172,8 +200,8 @@ function update_profile($conn, $type, $fullname, $email, $organization, $passwor
 
 function create_event($conn, $usernr, $name, $street, $zip, $city, $country, $dateofevent, $invitetxt, $radiuskm, $web)
 {
-    $query = "INSERT INTO tb_event (usernr, name, street, zip, city, country, dateofevent, invitetxt, radiuskm, web, sendout)
-    VALUES ('{$usernr}', '{$name}', '{$street}', '{$zip}', '{$city}', '{$country}', '{$dateofevent}', '{$invitetxt}', '{$radiuskm}', '{$web}', 0);";
+    $query = "INSERT INTO tb_event (usernr, name, street, zip, city, country, begindate, enddate, invitetxt, radiuskm, web, sendout)
+    VALUES ('{$usernr}', '{$name}', '{$street}', '{$zip}', '{$city}', '{$country}', '{$dateofevent}', '', '{$invitetxt}', '{$radiuskm}', '{$web}', 0);";
     return mysqli_query($conn, $query);
 }
 
@@ -191,15 +219,16 @@ function delete_event($conn, $event_id)
 
 # Add Convert Page
 
-function addConvert($conn, $email, $fullname, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $usernr){
+function addConvert($conn, $email, $fullname, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $usernr)
+{
     $query = "INSERT INTO tb_users ( email ) VALUES ('{$email}')";
     mysqli_query($conn, $query);
     $insertId = $conn->insert_id;
     $query = "INSERT INTO tb_members (usernr, type, fullname, organization, street, zip, city, country, cellphone, telephone, instagram, facebook, website) VALUES ('{$insertId}', '', '{$fullname}', '', '{$street}', '{$zip}', '{$city}', '{$country}', '{$cellphone}', '{$telephone}', '{$instagram}', '{$facebook}', '{$website}')";
-    
 
 
-    if($email != ""){
+
+    if ($email != "") {
         return mysqli_query($conn, $query);
     } else {
         $currentDateTime = date('Y-m-d H:i:s');
@@ -209,94 +238,162 @@ function addConvert($conn, $email, $fullname, $street, $zip, $city, $country, $c
     }
 }
 
-function select_members( $conn, $s_type, $s_fullname, $s_organization, $s_zip, $s_city, $s_country ){
+function select_members($conn, $s_type, $s_fullname, $s_organization, $s_zip, $s_city, $s_country)
+{
     $query = "SELECT * FROM tb_users JOIN tb_members ON tb_users.usernr = tb_members.usernr WHERE tb_users.active = '1' AND tb_members.fullname LIKE '%{$s_fullname}%' AND tb_members.zip LIKE '%{$s_zip}%' AND tb_members.type LIKE '%{$s_type}%' AND tb_members.organization LIKE '%{$s_organization}%' AND tb_members.city LIKE '%{$s_city}%' AND tb_members.country LIKE '%{$s_country}%'";
     return mysqli_query($conn, $query);
 }
 
-function select_newBorn($conn, $usernr, $newBornnr){
+function select_membersToMe($conn, $s_type, $s_fullname, $s_organization, $s_zip, $s_city, $s_country) {
+    $query = "SELECT *
+        FROM tb_connection
+        JOIN tb_users ON tb_connection.usernr1 = tb_users.usernr OR tb_connection.usernr2 = tb_users.usernr
+        JOIN tb_members ON tb_users.usernr = tb_members.usernr
+        WHERE tb_users.active = '1'
+        AND tb_members.fullname LIKE '%{$s_fullname}%'
+        AND tb_members.zip LIKE '%{$s_zip}%'
+        AND tb_members.type LIKE '%{$s_type}%'
+        AND tb_members.organization LIKE '%{$s_organization}%'
+        AND tb_members.city LIKE '%{$s_city}%'
+        AND tb_members.country LIKE '%{$s_country}%';";
+    return mysqli_query($conn, $query);
+}
+
+function select_newBorn($conn, $usernr, $newBornnr)
+{
     $query = "SELECT * FROM tb_connection WHERE usernr1={$usernr} AND usernr2={$newBornnr} AND status='1'";
 
     return mysqli_query($conn, $query);
 }
 
-function select_events($conn, $sname, $sorg, $szip, $scity, $scountry, $sstartDate, $sendDate){
+function select_events($conn, $sname, $sorg, $szip, $scity, $scountry, $sstartDate, $sendDate)
+{
     $query = "SELECT * FROM tb_event CROSS JOIN tb_members ON tb_event.usernr = tb_members.usernr CROSS JOIN tb_users ON tb_event.usernr = tb_users.usernr WHERE tb_users.active = '1' AND tb_event.name LIKE '%{$sname}%' AND tb_members.organization LIKE '%{$sorg}%' AND tb_event.zip LIKE '%{$szip}%' AND tb_event.city LIKE '%{$scity}%' AND tb_event.country LIKE '%{$scountry}%'";
-    if($sstartDate && $sendDate){
-        $query .= "AND tb_event.dateofevent BETWEEN '{$sstartDate}' AND '{$sendDate}'";
+    if ($sstartDate && $sendDate) {
+        $query .= "AND tb_event.begindate = '{$sstartDate}' AND tb_event.enddate = '{$sendDate}'";
     }
     return mysqli_query($conn, $query);
 }
- 
-function select_policyByLang($conn, $lang){
+
+function select_policyByLang($conn, $lang)
+{
     $query = "SELECT * FROM tb_default_lang WHERE langu='$lang'";
     return mysqli_query($conn, $query);
 }
 
-function select_types($conn){
+function select_types($conn)
+{
     $query = "SELECT * FROM tb_types";
     return mysqli_query($conn, $query);
 }
 
-function select_event_detail($conn, $event_id){
-    $query = "SELECT * FROM tb_event CROSS JOIN tb_members ON tb_event.usernr = tb_members.usernr CROSS JOIN tb_users ON tb_event.usernr = tb_users.usernr WHERE tb_event.eventnr = '{$event_id}'";
+function select_types_eng($conn)
+{
+    $query = "SELECT * FROM tb_types WHERE langu='english'";
     return mysqli_query($conn, $query);
 }
 
-function select_meFromEvent($conn, $event_id, $usernr){
+function select_event_detail($conn, $event_id)
+{
+    $query = "SELECT * FROM tb_members CROSS JOIN tb_event ON tb_event.usernr = tb_members.usernr CROSS JOIN tb_users ON tb_event.usernr = tb_users.usernr WHERE tb_event.eventnr = '{$event_id}'";
+    return mysqli_query($conn, $query);
+}
+
+function select_meFromEvent($conn, $event_id, $usernr)
+{
     $query = "SELECT * FROM tb_event_att WHERE tb_event_att.usernr='{$usernr}' AND tb_event_att.eventnr='$event_id'";
     return mysqli_query($conn, $query);
 }
 
-function attend_meToEvent($conn, $usernr, $eventnr){
+function attend_meToEvent($conn, $usernr, $eventnr)
+{
     $cdate = date("Y-m-d H:i:s");
     $query = "INSERT INTO tb_event_att (eventnr, usernr, cdate) VALUES ('{$eventnr}', '{$usernr}', '{$cdate}')";
     return mysqli_query($conn, $query);
 }
 
-function delete_meFromEvent($conn, $usernr, $eventnr){
+function delete_meFromEvent($conn, $usernr, $eventnr)
+{
     $query = "DELETE FROM tb_event_att WHERE tb_event_att.eventnr='{$eventnr}' AND tb_event_att.usernr='{$usernr}'";
     return mysqli_query($conn, $query);
 }
 
-function select_eventMembers($conn, $event_id){
+function select_eventMembers($conn, $event_id)
+{
     $query = "SELECT * FROM tb_event_att CROSS JOIN tb_users ON tb_event_att.usernr = tb_users.usernr CROSS JOIN tb_members ON tb_event_att.usernr = tb_members.usernr WHERE tb_event_att.eventnr='{$event_id}'";
     return mysqli_query($conn, $query);
 }
 
-function update_activeMember($conn, $usernr, $val){
+function update_activeMember($conn, $usernr, $val)
+{
     $query = "UPDATE tb_users SET tb_users.active='{$val}' WHERE tb_users.usernr='{$usernr}'";
     return mysqli_query($conn, $query);
 }
 
-function select_connectMembers($conn, $usernr1, $usernr2){
+function select_connectMembers($conn, $usernr1, $usernr2)
+{
     $query = "SELECT * FROM tb_connection WHERE tb_connection.usernr2='{$usernr2}' AND tb_connection.usernr1='{$usernr1}'";
     return mysqli_query($conn, $query);
 }
 
-function create_connect($conn, $usernr1, $usernr2){
+function insert_connectMember($conn, $usernr1, $usernr2, $cdate, $status)
+{
+    $currentDateTime = date('Y-m-d H:i:s');
+    $query = "INSERT INTO tb_connection (usernr1, usernr2, cdate, status) VALUES ('{$usernr1}', '{$usernr2}', '{$currentDateTime}', '{$status}')";
+    return mysqli_query($conn, $query);
+}
+
+function update_connectMembers($conn, $usernr1, $usernr2, $cdate, $status)
+{
+    $currentDateTime = date('Y-m-d H:i:s');
+    $query = "UPDATE tb_connection SET tb_connection.cdate='{$currentDateTime}', tb_connection.status='{$status}' WHERE tb_connection.usernr1='{$usernr1}' AND tb_connection.usernr2='{$usernr2}'";
+    return mysqli_query($conn, $query);
+}
+
+function delete_connectMembers($conn, $usernr1, $usernr2) {
+    $query = "DELETE FROM tb_connection WHERE tb_connection.usernr1='{$usernr1}' AND tb_connection.usernr2='{$usernr2}'";
+    return mysqli_query($conn, $query);
+}
+
+function select_evangel_lang($conn, $evangelL)
+{
+    $query = "SELECT * FROM tb_evangel WHERE langu='$evangelL'";
+    return mysqli_query($conn, $query);
+}
+
+function select_evangel_lang_sort($conn)
+{
+    $query = "SELECT DISTINCT langu FROM tb_evangel ORDER BY langu";
+    return mysqli_query($conn, $query);
+}
+
+function create_connect($conn, $usernr1, $usernr2)
+{
     $currentDateTime = date('Y-m-d H:i:s');
     $query = "INSERT INTO tb_connection (usernr1, usernr2, cdate, status) VALUES ('$usernr1', '$usernr2', '$currentDateTime', '1')";
     return mysqli_query($conn, $query);
 }
 
-function update_connect($conn, $usernr1, $usernr2){
+function update_connect($conn, $usernr1, $usernr2)
+{
     $query = "UPDATE tb_connection SET tb_connection.status = '1' WHERE tb_connection.usernr2='{$usernr2}' AND tb_connection.usernr1='{$usernr1}'";
     return mysqli_query($conn, $query);
 }
 
-function delete_connect($conn, $usernr1, $usernr2){
+function delete_connect($conn, $usernr1, $usernr2)
+{
     $query = "UPDATE tb_connection SET tb_connection.status = '2' WHERE tb_connection.usernr2='{$usernr2}' AND tb_connection.usernr1='{$usernr1}'";
     return mysqli_query($conn, $query);
 }
 
 // Add Convert
-function logic_AddConvert($conn, $email, $whatsapp, $usernr){
-    if($email){
+function logic_AddConvert($conn, $email, $whatsapp, $usernr)
+{
+    if ($email) {
         // send email
     } else {
         $code = "";
-        if($whatsapp && $code){
+        if ($whatsapp && $code) {
             // send email
         } else {
             // tb_connection = "S"
@@ -305,4 +402,15 @@ function logic_AddConvert($conn, $email, $whatsapp, $usernr){
 
     // search church by zip @tb_connection = 0
 }
-?>
+
+
+// Remove my data from all database
+function remove_me($conn, $usernr) {
+    // Remove from tb_users
+    $query = "DELETE FROM tb_users WHERE usernr = '{$usernr}'";
+    mysqli_query($conn, $query);
+
+    // Remove from tb_members
+    $query = "DELETE FROM tb_members WHERE usernr = '{$usernr}'";
+    mysqli_query($conn, $query);
+}

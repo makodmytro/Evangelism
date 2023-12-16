@@ -1,10 +1,10 @@
+<?php include 'inc/pre.php' ?>
 <?php
-include 'inc/header.php';
-$navTitle="Edit Profile";
+$navTitle = "Edit Profile";
 include 'inc/nav.php';
 ?>
 <?php
-if(!isset($_SESSION["SESSION_EMAIL"])){
+if (!isset($_SESSION["SESSION_EMAIL"])) {
     header("Location: index.php");
 }
 
@@ -21,7 +21,7 @@ if (mysqli_num_rows($result) > 0) {
 }
 
 try {
-    $types = select_types($conn);
+    $types = select_types_eng($conn);
 } catch (\Throwable $th) {
     //throw $th;
     $msg = "<div class='alert alert-danger'>'{$th->getMessage()}'</div>";
@@ -44,12 +44,12 @@ if (isset($_POST['submit'])) {
     $password = mysqli_real_escape_string($conn, $_POST['password']);
     $confirm_password = mysqli_real_escape_string($conn, $_POST['confirm_password']);
 
-      // Validate password strength
-    if($password === ''){
+    // Validate password strength
+    if ($password === '') {
         $password = $row["password"];
         try {
             $res = update_profile($conn, $type, $fullname, $email, $organization, $password, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $row["usernr"]);
-            
+
             header("Location: home.php");
         } catch (\Throwable $th) {
             throw $th;
@@ -59,18 +59,18 @@ if (isset($_POST['submit'])) {
         $lowercase = preg_match('@[a-z]@', $password);
         $number = preg_match('@[0-9]@', $password);
         $specialChars = preg_match('@[^\w]@', $password);
-    
+
         if (!$uppercase || !$lowercase || !$number || !$specialChars || strlen($password) < 8) {
             $msg = "<div class='alert alert-danger'>Password should be at least 8 characters in length and should include at least one upper case letter, one number, and one special character.</div>";
         } else {
             if (isEmailExists($conn, $email)) {
-                if($email !== $row["email"]) {
+                if ($email !== $row["email"]) {
                     $msg = "<div class='alert alert-danger'>{$email} - This email address already exists.</div>";
                 } else {
                     $msg = "";
                     try {
                         $res = update_profile($conn, $type, $fullname, $email, $organization, $password, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $row["usernr"]);
-                        
+
                         header("Location: home.php");
                     } catch (\Throwable $th) {
                         throw $th;
@@ -80,7 +80,7 @@ if (isset($_POST['submit'])) {
                 if ($password === $confirm_password) {
                     try {
                         $res = update_profile($conn, $type, $fullname, $email, $organization, $password, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $row["usernr"]);
-                        
+
                         header("Location: home.php");
                     } catch (\Throwable $th) {
                         throw $th;
@@ -91,9 +91,8 @@ if (isset($_POST['submit'])) {
             }
         }
     }
-
-    
 }
+include 'inc/header.php';
 ?>
 
 
@@ -107,11 +106,9 @@ if (isset($_POST['submit'])) {
                     <input type="text" class="form-control mt-3" name="street" placeholder="Enter Your Street" value="<?= $row["street"] ?>">
                     <div class="d-flex gap-3">
                         <input type="text" class="form-control mt-3" name="zip" placeholder="* Enter Your Zip" value="<?= $row["zip"] ?>" required>
-                        <input type="text" class="form-control mt-3" name="city" placeholder="* Enter Your City" value="<?= $row["city"] ?>"
-                            required>
+                        <input type="text" class="form-control mt-3" name="city" placeholder="* Enter Your City" value="<?= $row["city"] ?>" required>
                     </div>
-                    <select type="text" class="form-control mt-3" name="country" onchange="handle_changeCountry(event)" value="<?= $row["country"] ?>"
-                        style="padding: 12px;" required>
+                    <select type="text" class="form-control mt-3" name="country" onchange="handle_changeCountry(event)" value="<?= $row["country"] ?>" style="padding: 12px;" required>
                         <option value="" disabled selected>Select Your Country</option>
                         <?php foreach ($countryNames as $countryName) { ?>
                             <option value="<?= $countryName ?>" <?php echo ($row["country"] == $countryName) ? 'selected' : ''; ?>>
@@ -128,17 +125,16 @@ if (isset($_POST['submit'])) {
                 <div class="col-lg-1 col-md-12"></div>
                 <div class="col-lg-4 col-md-12 border border-1 border-solid px-4 pt-3 pb-3 mb-5 text-break">
                     <select type="text" class="form-control mt-3" name="type" style="padding: 12px" required>
-                    <?php while($row1 = $types->fetch_assoc()) { ?>
-                        <option value="<?= $row1['type'] . ',' . strtoupper($row1['langu']) ?>" <?php echo ($row1["type"] == $row1["type"] . ',' . strtoupper($row1["langu"])) ? 'selected' : ''; ?>><?= $row1["descript"] ?> (<?= strtoupper($row1["langu"]) ?>)</option>
-                    <?php } ?>
+                        <?php while ($row1 = $types->fetch_assoc()) { ?>
+                            <option value="<?= $row1['type'] . ',' . strtoupper($row1['langu']) ?>" <?php echo ($row1["type"] == $row1["type"] . ',' . strtoupper($row1["langu"])) ? 'selected' : ''; ?>><?= $row1["descript"] ?></option>
+                        <?php } ?>
                     </select>
                     <input type="text" class="form-control mt-3" name="fullname" placeholder="Enter Your Full Name" value="<?= $row["fullname"] ?>">
                     <input type="text" class="form-control mt-3" name="email" placeholder="Enter Your Email Address" value="<?= $row["email"] ?>">
                     <input type="text" class="form-control mt-3" name="organization" placeholder="Enter Your Organization" value="<?= $row["organization"] ?>">
                     <input type="password" class="form-control mt-3" name="password" placeholder="Enter Your Password">
-                    <input type="password" class="form-control mt-3" name="confirm_password"
-                        placeholder="Enter Your Retype Password">
-                    <button name="submit" class="btn btn-primary mt-5 w-100" type="submit">Seve Data</button>
+                    <input type="password" class="form-control mt-3" name="confirm_password" placeholder="Enter Your Retype Password">
+                    <button name="submit" class="btn btn-primary mt-5 w-100" type="submit">Save Data</button>
                 </div>
             </div>
         </form>

@@ -1,3 +1,4 @@
+<?php include 'inc/pre.php' ?>
 <?php include 'inc/header.php' ?>
 <?php $navTitle = "Main Menu"; ?>
 <?php include 'inc/nav.php' ?>
@@ -37,7 +38,7 @@
                                 <img src="<?= DOMAIN ?>/assets/images/home1.png" alt="">
                             </div>
                             <div class="d-flex justify-content-center align-items-center">
-                                Evangelism
+                                &nbsp;&nbsp;&nbsp;Evangelism
                             </div>
                         </div>
                     </button>
@@ -52,7 +53,7 @@
                                     <img src="<?= DOMAIN ?>/assets/images/home2.png" alt="">
                                 </div>
                                 <div class="d-flex justify-content-center align-items-center">
-                                    Add Convert
+                                    &nbsp;&nbsp;Add Convert
                                 </div>
                             </div>
                         </button>
@@ -67,7 +68,7 @@
                                 <img src="<?= DOMAIN ?>/assets/images/home3.png" alt="">
                             </div>
                             <div class="d-flex justify-content-center align-items-center">
-                                Search Members
+                                &nbsp;&nbsp;&nbsp;Search Members
                             </div>
                         </div>
                     </button>
@@ -81,7 +82,7 @@
                                 <img src="<?= DOMAIN ?>/assets/images/events.png" alt="">
                             </div>
                             <div class="d-flex justify-content-center align-items-center">
-                                Create Event
+                                &nbsp;&nbsp;&nbsp;Create Event
                             </div>
                         </div>
                     </button>
@@ -95,7 +96,7 @@
                                 <img src="<?= DOMAIN ?>/assets/images/home5.png" alt="">
                             </div>
                             <div class="d-flex justify-content-center align-items-center">
-                                Search Event
+                                &nbsp;&nbsp;&nbsp;Search Event
                             </div>
                         </div>
                     </button>

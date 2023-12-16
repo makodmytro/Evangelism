@@ -1,3 +1,4 @@
+<?php include 'inc/pre.php' ?>
 <?php include 'inc/header.php' ?>
 <?php $navTitle = "Search Events"; ?>
 <?php include 'inc/nav.php' ?>
@@ -78,7 +79,10 @@ if (isset($_POST['submit'])) {
                                     <?= $row["cellphone"] ?>
                                 </div>
                                 <div>
-                                    <?= $row["dateofevent"] ?>
+                                    <?= $row["begindate"] ?>
+                                </div>
+                                <div>
+                                    <?= $row["enddate"] ?>
                                 </div>
                             </div>
                         </div>
@@ -101,8 +105,7 @@ if (isset($_POST['submit'])) {
                                 <div class="col-sm-4">
                                 </div>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control mt-3" name="event" placeholder="Event Name"
-                                        required>
+                                    <input type="text" class="form-control mt-3" name="event" placeholder="Event Name">
                                 </div>
                             </div>
                             <div class="row px-3">
@@ -114,7 +117,7 @@ if (isset($_POST['submit'])) {
                             </div>
                             <div class="row px-3">
                                 <div class="col-sm-4">
-                                    <input type="text" class="form-control mt-3" name="zip" placeholder="Zip" required>
+                                    <input type="text" class="form-control mt-3" name="zip" placeholder="Zip">
                                 </div>
                                 <div class="col-sm-8">
                                     <input type="text" class="form-control mt-3" name="city" placeholder="City">

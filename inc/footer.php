@@ -6,7 +6,7 @@
   integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
 <script src="https://kit.fontawesome.com/af562a2a63.js" crossorigin="anonymous"></script> -->
-
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBWJPDBXRHjvgNN8DFAOX1VWv63rPvnXD0&callback=initMap"></script>
 </body>
 
 </html>

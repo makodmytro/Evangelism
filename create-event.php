@@ -1,3 +1,4 @@
+<?php include 'inc/pre.php' ?>
 <?php include 'inc/header.php' ?>
 <?php $navTitle = "Create Event"; ?>
 <?php include 'inc/nav.php' ?>
@@ -75,7 +76,7 @@ if (isset($_POST['submit'])) {
                     <textarea class="form-control mt-3" rows="8" name="message" placeholder="message" required></textarea>
                     <input type="text" class="form-control mt-3" name="kmRadius" placeholder="KM Radius to invite" required>
                     <hr>
-                    <button name="submit" class="btn btn-primary mt-5 w-100" type="submit">Send Data</button>
+                    <button name="submit" class="btn btn-primary mt-5 w-100" type="submit">Create Event</button>
                 </div>
             </div>
         </form>

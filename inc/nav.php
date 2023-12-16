@@ -1,5 +1,5 @@
 <?php
-    if(!$_SESSION["fullname"]){
+    if(!isset($_SESSION["fullname"])){
         header("Location: index.php");
         exit();
     }
@@ -12,17 +12,17 @@
         <h2 class="mb-0"><?= $navTitle ?></h2>
         <div class="position-relative">
             <div class="dropdown-toggle fs-5 d-flex justify-content-center align-items-center" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fa fa-user-circle fs-3"></i>&nbsp;&nbsp;<?= $_SESSION['fullname'] ?>
+                <?= $_SESSION['fullname'] ?>
             </div>
             <ul class="dropdown-menu start-auto width-fit-content ps-3 pe-3 bg-primary">
                 <li>
                     <a class="dropdown-item text-white mt-3" href="edit-profile.php">
-                        <i class="fa fa-user-circle"></i>&nbsp;&nbsp;Edit Profile
+                        Edit Profile
                     </a>
                 </li>
                 <li>
                     <a class="dropdown-item text-white mt-3" href="logout.php">
-                        <i class="fa fa-sign-out"></i>&nbsp;&nbsp;Log out
+                        Log out
                     </a>
                 </li>
             </ul>

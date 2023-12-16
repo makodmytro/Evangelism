@@ -130,6 +130,19 @@ input:active {
     align-items: center;
 }
 
+.auth-container {
+    flex-direction: row !important;
+}
+
+.auth-main {
+    width: 50%;
+}
+
+.auth-image {
+    width: 50%;
+    display: flex;
+}
+
 @media screen and (max-width: 768px) {
     .member-image {
         width: 50%;
@@ -143,6 +156,18 @@ input:active {
     .member-info {
         flex-direction: column;
         width: 50%;
+    }
+
+    .auth-container {
+        flex-direction: column !important;
+    }
+
+    .auth-main {
+        width: 100% !important;
+    }
+
+    .auth-image {
+        width: 100% !important;
     }
 }
 

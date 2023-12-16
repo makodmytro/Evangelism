@@ -1,11 +1,10 @@
+<?php include 'inc/pre.php' ?>
 <?php
 $navTitle = "Edit Profile";
-include 'inc/header.php';
-include 'inc/nav.php';
 include 'inc/country.php';
 $msg = "";
 try {
-    $types = select_types($conn);
+    $types = select_types_eng($conn);
 } catch (\Throwable $th) {
     //throw $th;
     $msg = "<div class='alert alert-danger'>'{$th->getMessage()}'</div>";
@@ -35,6 +34,8 @@ if (isset($_POST['register'])) {
     $website = mysqli_real_escape_string($conn, $_POST['website']);
     $password = mysqli_real_escape_string($conn, $_POST['password']);
     $confirm_password = mysqli_real_escape_string($conn, $_POST['confirm_password']);
+
+    $msg = 'sdfsdfsdf';
 
       // Validate password strength
     if($password === ''){
@@ -86,6 +87,8 @@ if (isset($_POST['register'])) {
 
     
 }
+include 'inc/header.php';
+include 'inc/nav.php';
 ?>
 
 <section class="container h-100">
@@ -119,9 +122,9 @@ if (isset($_POST['register'])) {
                 <div class="col-lg-1 col-md-12"></div>
                 <div class="col-lg-4 col-md-12 border border-1 border-solid px-4 pt-3 pb-3 mb-5 text-break">
                     <select type="text" class="form-control mt-3" name="type" style="padding: 12px" required>
-                    <?php while($row1 = $types->fetch_assoc()) { ?>
-                        <option value="<?= $row1['type'] . ',' . strtoupper($row1['langu']) ?>" <?php echo ($row1["type"] == $row1["descript"] . ',' . strtoupper($row1["langu"])) ? 'selected' : ''; ?>><?= $row1["descript"] ?> (<?= strtoupper($row1["langu"]) ?>)</option>
-                    <?php } ?>
+                        <?php while($row1 = $types->fetch_assoc()) { ?>
+                            <option value="<?= $row1['type'] ?>"><?= $row1["descript"] ?></option>
+                        <?php } ?>
                     </select>
                     <input type="text" class="form-control mt-3" name="fullname" placeholder="Enter Your Full Name" value="<?= $row["fullname"] ?>">
                     <input type="text" class="form-control mt-3" name="email" placeholder="Enter Your Email Address" value="<?= $row["email"] ?>">
@@ -129,7 +132,7 @@ if (isset($_POST['register'])) {
                     <input type="password" class="form-control mt-3" name="password" placeholder="Enter Your Password">
                     <input type="password" class="form-control mt-3" name="confirm_password"
                         placeholder="Enter Your Retype Password">
-                    <button name="register" class="btn btn-primary mt-5 w-100" type="submit">Seve Data</button>
+                    <button name="register" class="btn btn-primary mt-5 w-100" type="submit">Save Data</button>
                 </div>
             </div>
         </form>

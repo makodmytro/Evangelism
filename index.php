@@ -1,9 +1,9 @@
+<?php include 'inc/pre.php' ?>
 <?php
     if (isset($_SESSION['SESSION_EMAIL'])) {
         header("Location: home.php");
         die();
     }
-    include 'inc/header.php';
     $msg = "";
     if (isset($_GET['verification'])) {
         $verificationCode = $_GET['verification'];
@@ -28,11 +28,14 @@
                     $res_user = select_userById($conn, $user['usernr']);
                     $uuser = mysqli_fetch_assoc($res_user);
                     $_SESSION['fullname'] = $uuser['fullname'];
+                    $_SESSION['street'] = $uuser['street'];
+                    $_SESSION['city'] = $uuser['city'];
+                    $_SESSION['country'] = $uuser['country'];
                     if(isUsernrExistsInMembers($conn, $user['usernr']) && $user["active"] == 1) {
-                        // header("Location: home.php");
+                        header("Location: home.php");
                         die();
                     } else {
-                        // header('Location: register-member.php');
+                        header('Location: register-member.php');
                         die();
                     }
                 } else {
@@ -45,15 +48,16 @@
             $msg = "<div class='alert alert-danger'>Email or password do not match.</div>";
         }
     }
+    include 'inc/header.php';
 ?>
 
 <section class="container h-100">
     <div class="d-flex justify-content-center align-items-center h-100">
-        <div class="d-flex gap-5">
-            <div class="w-50 d-flex justify-content-center align-items-center bg-primary">
+        <div class="d-flex gap-5 auth-container">
+            <div class="auth-image justify-content-center align-items-center bg-primary">
                 <img src="assets/images/logo.png" alt="" class="w-75">
             </div>
-            <div class="w-50 pt-3 pb-3">
+            <div class="pt-3 pb-3 auth-main">
                 <h2>Login Now</h2>
                 <?php echo $msg; ?>
                 <form action="" method="post">

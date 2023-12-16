@@ -1,245 +1,247 @@
--- phpMyAdmin SQL Dump
--- version 5.2.0
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: Nov 24, 2023 at 05:52 PM
--- Server version: 10.4.27-MariaDB
--- PHP Version: 8.2.0
+/*
+ Navicat Premium Data Transfer
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
+ Source Server         : localhost_3306
+ Source Server Type    : MySQL
+ Source Server Version : 100427 (10.4.27-MariaDB)
+ Source Host           : localhost:3306
+ Source Schema         : hopeforevangelism_com
 
+ Target Server Type    : MySQL
+ Target Server Version : 100427 (10.4.27-MariaDB)
+ File Encoding         : 65001
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+ Date: 08/12/2023 07:56:00
+*/
 
---
--- Database: `hopeforevangelism_com`
---
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `tb_connection`
---
-
-CREATE TABLE `tb_connection` (
-  `usernr1` int(11) NOT NULL,
-  `usernr2` int(11) NOT NULL,
+-- ----------------------------
+-- Table structure for tb_connection
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_connection`;
+CREATE TABLE `tb_connection`  (
+  `usernr1` int NOT NULL,
+  `usernr2` int NOT NULL,
   `cdate` date NOT NULL,
-  `status` tinyint(4) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `status` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`usernr1`, `usernr2`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
--- --------------------------------------------------------
+-- ----------------------------
+-- Records of tb_connection
+-- ----------------------------
+INSERT INTO `tb_connection` VALUES (1, 1, '2023-12-01', '2');
+INSERT INTO `tb_connection` VALUES (1, 3, '2023-12-01', '2');
+INSERT INTO `tb_connection` VALUES (1, 6, '2023-12-01', '1');
+INSERT INTO `tb_connection` VALUES (3, 1, '2023-12-01', '2');
+INSERT INTO `tb_connection` VALUES (5, 1, '2023-12-01', '2');
+INSERT INTO `tb_connection` VALUES (5, 3, '2023-12-01', '1');
+INSERT INTO `tb_connection` VALUES (6, 1, '2023-12-01', '1');
 
---
--- Table structure for table `tb_default`
---
+-- ----------------------------
+-- Table structure for tb_default
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_default`;
+CREATE TABLE `tb_default`  (
+  `radius` int NOT NULL
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
-CREATE TABLE `tb_default` (
-  `radius` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- ----------------------------
+-- Records of tb_default
+-- ----------------------------
+INSERT INTO `tb_default` VALUES (50);
 
--- --------------------------------------------------------
+-- ----------------------------
+-- Table structure for tb_default_lang
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_default_lang`;
+CREATE TABLE `tb_default_lang`  (
+  `langu` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `legal_text` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  PRIMARY KEY (`langu`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
---
--- Table structure for table `tb_evangel`
---
+-- ----------------------------
+-- Records of tb_default_lang
+-- ----------------------------
+INSERT INTO `tb_default_lang` VALUES ('english', 'That my data will be stored and processed for the purpose of contacting me and for community work in accordance with the statutory provisions on data protection. You can object to further processing at any time, as well as request correction, deletion and information about your data, insofar as this is legally permissible. Further information (incl. privacy policy) can be found at www.hopeforevangelism.com/privacy-policy');
+INSERT INTO `tb_default_lang` VALUES ('german', 'Dass meine Daten zum Zweck der Kontaktaufnahme und der Gemeindearbeit gemäß der gesetzlichen Bestimmungen zum Datenschutz gespeichert und verarbeitet werden. Der weiteren Verarbeitung kannst du jederzeit widersprechen, sowie Berichtigung, Löschung und Auskunft über deine Daten verlangen, soweit dies gesetzlich zulässig ist. Weitere Informationen (inkl. Datenschutzerklärung) unter www.hopeforevangelism.com/privacy-policy');
 
-CREATE TABLE `tb_evangel` (
-  `langu` varchar(20) NOT NULL,
-  `descript` varchar(30) NOT NULL,
-  `lnk` varchar(200) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- ----------------------------
+-- Table structure for tb_email_text
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_email_text`;
+CREATE TABLE `tb_email_text`  (
+  `langu` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `ewtype` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `pos` tinyint NOT NULL,
+  `html_link` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `txt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  PRIMARY KEY (`langu`, `type`, `ewtype`, `pos`, `html_link`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
--- --------------------------------------------------------
+-- ----------------------------
+-- Records of tb_email_text
+-- ----------------------------
+INSERT INTO `tb_email_text` VALUES ('english', 'connect', 'email', 1, 'html', 'I would like to connect with you, so that in the future, when we have events, you will be automatically invited to them. Please click on the below link to confirm this.');
+INSERT INTO `tb_email_text` VALUES ('english', 'newBorn', 'email', 1, 'html', 'Welcome to our portal on www.hopeforevangelism.com');
+INSERT INTO `tb_email_text` VALUES ('english', 'newBorn', 'email', 2, 'html', 'Please check out our privacy policy');
+INSERT INTO `tb_email_text` VALUES ('english', 'newBorn', 'email', 3, 'link', 'https://www.hopeforevangelism.com/privacy-policy/');
+INSERT INTO `tb_email_text` VALUES ('english', 'newBorn', 'email', 4, 'html', 'Please review who can contact you. By clicking on the links below, you will revoke their rights to contact you.');
+INSERT INTO `tb_email_text` VALUES ('english', 'register', 'email', 1, 'html', 'Welcome to HopeForEvangelism.com');
+INSERT INTO `tb_email_text` VALUES ('english', 'register', 'email', 2, 'html', 'Please check out our privacy policy');
+INSERT INTO `tb_email_text` VALUES ('english', 'register', 'email', 3, 'link', 'https://www.hopeforevangelism.com/privacy-policy/');
 
---
--- Table structure for table `tb_event`
---
+-- ----------------------------
+-- Table structure for tb_evangel
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_evangel`;
+CREATE TABLE `tb_evangel`  (
+  `langu` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `descript` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `lnk` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  PRIMARY KEY (`langu`, `descript`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
-CREATE TABLE `tb_event` (
-  `eventnr` int(11) NOT NULL,
-  `usernr` int(11) NOT NULL,
-  `name` varchar(60) NOT NULL,
-  `street` varchar(70) NOT NULL,
-  `zip` varchar(30) NOT NULL,
-  `city` varchar(50) NOT NULL,
-  `country` varchar(50) NOT NULL,
-  `dateofevent` varchar(100) NOT NULL,
-  `invitetxt` varchar(300) NOT NULL,
-  `radiuskm` int(11) NOT NULL,
-  `web` varchar(200) DEFAULT NULL,
-  `sendout` tinyint(4) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- ----------------------------
+-- Records of tb_evangel
+-- ----------------------------
+INSERT INTO `tb_evangel` VALUES ('Deutsch', 'Katholiken', 'https://www.hopeforevangelism.com/2023/11/18/katholiken/');
+INSERT INTO `tb_evangel` VALUES ('English', 'Catholic', 'https://www.hopeforevangelism.com/2023/11/18/catholics/');
+INSERT INTO `tb_evangel` VALUES ('English', 'Muslim', 'https://www.hopeforevangelism.com/2023/11/18/muslims/');
 
---
--- Dumping data for table `tb_event`
---
+-- ----------------------------
+-- Table structure for tb_event
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_event`;
+CREATE TABLE `tb_event`  (
+  `eventnr` int NOT NULL AUTO_INCREMENT,
+  `usernr` int NOT NULL,
+  `name` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `street` varchar(70) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `zip` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `city` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `country` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `dateofevent` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `invitetxt` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `radiuskm` int NOT NULL,
+  `web` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `facebook` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `instagram` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `sendout` tinyint NULL DEFAULT NULL,
+  PRIMARY KEY (`eventnr`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
-INSERT INTO `tb_event` (`eventnr`, `usernr`, `name`, `street`, `zip`, `city`, `country`, `dateofevent`, `invitetxt`, `radiuskm`, `web`, `sendout`) VALUES
-(1, 101, 'Event 1', 'Street 1', '12345', 'City 1', 'Country 1', '2023-11-23', 'Invite 1', 5, 'http://web1.com', 127),
-(2, 102, 'Event 2', 'Street 2', '67890', 'City 2', 'Country 2', '2023-11-24', 'Invite 2', 10, 'http://web2.com', 127),
-(3, 103, 'Event 3', 'Street 3', '11111', 'City 3', 'Country 3', '2023-11-25', 'Invite 3', 15, 'http://web3.com', 127),
-(4, 104, 'Event 4', 'Street 4', '22222', 'City 4', 'Country 4', '2023-11-26', 'Invite 4', 20, 'http://web4.com', 127),
-(5, 105, 'Event 5', 'Street 5', '33333', 'City 5', 'Country 5', '2023-11-27', 'Invite 5', 25, 'http://web5.com', 127),
-(6, 106, 'Event 6', 'Street 6', '44444', 'City 6', 'Country 6', '2023-11-28', 'Invite 6', 30, 'http://web6.com', 127),
-(7, 107, 'Event 7', 'Street 7', '55555', 'City 7', 'Country 7', '2023-11-29', 'Invite 7', 35, 'http://web7.com', 127),
-(8, 108, 'Event 8', 'Street 8', '66666', 'City 8', 'Country 8', '2023-11-30', 'Invite 8', 40, 'http://web8.com', 127),
-(9, 109, 'Event 9', 'Street 9', '77777', 'City 9', 'Country 9', '2023-12-01', 'Invite 9', 45, 'http://web9.com', 127),
-(10, 110, 'Event 10', 'Street 10', '88888', 'City 10', 'Country 10', '2023-12-02', 'Invite 10', 50, 'http://web10.com', 127);
+-- ----------------------------
+-- Records of tb_event
+-- ----------------------------
+INSERT INTO `tb_event` VALUES (1, 1, 'Test Create', 'Kindiyskoye highway', '73000-73480', 'Kherson', 'ukraine', '12/06/2023', 'Test', 1, '', NULL, NULL, 0);
+INSERT INTO `tb_event` VALUES (3, 3, 'Test1', 'Промислова вулиця, 3', '98400-98408', 'городское поселение Бахчисарай', 'ukraine', '01/10/2024', 'Test', 1, '', NULL, NULL, 0);
+INSERT INTO `tb_event` VALUES (4, 3, 'Test1', '16545 Yonge St', 'L3X 2G8', 'Newmarket', 'canada', '01/10/2024', 'test', 0, '', NULL, NULL, 0);
+INSERT INTO `tb_event` VALUES (5, 6, 'Test Create', 'Kindiyskoye highway', '73000-73480', 'Kherson', 'ukraine', '01/18/2024', 'Test', 1, '', NULL, NULL, 0);
+INSERT INTO `tb_event` VALUES (6, 1, 'Test Create', 'Kindiyskoye highway', '73000-73480', 'Kherson', 'ukraine', '12/10/2023', 'Test', 1, '', NULL, NULL, 0);
 
--- --------------------------------------------------------
+-- ----------------------------
+-- Table structure for tb_event_att
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_event_att`;
+CREATE TABLE `tb_event_att`  (
+  `eventnr` int NOT NULL,
+  `usernr` int NOT NULL,
+  `cdate` date NOT NULL,
+  PRIMARY KEY (`eventnr`, `usernr`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
---
--- Table structure for table `tb_event_att`
---
+-- ----------------------------
+-- Records of tb_event_att
+-- ----------------------------
+INSERT INTO `tb_event_att` VALUES (1, 6, '2023-12-01');
+INSERT INTO `tb_event_att` VALUES (3, 5, '2023-12-03');
 
-CREATE TABLE `tb_event_att` (
-  `eventnr` int(11) NOT NULL,
-  `usernr` int(11) NOT NULL,
-  `cdate` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- ----------------------------
+-- Table structure for tb_members
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_members`;
+CREATE TABLE `tb_members`  (
+  `usernr` int NOT NULL AUTO_INCREMENT,
+  `type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `fullname` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `organization` varchar(70) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `street` varchar(70) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `zip` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `city` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `country` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `cellphone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `telephone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `instagram` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `facebook` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `website` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `whatsappcode` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `active` tinyint NOT NULL,
+  `sendout` tinyint NULL DEFAULT NULL,
+  PRIMARY KEY (`usernr`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
--- --------------------------------------------------------
+-- ----------------------------
+-- Records of tb_members
+-- ----------------------------
+INSERT INTO `tb_members` VALUES (1, 'Church,DEUTSCH', 'Test User', 'Upwork', 'Kindiyskoye highway', '73000-73480', 'Kherson', 'ukraine', '', '', '', '', '', NULL, 0, NULL);
+INSERT INTO `tb_members` VALUES (3, 'Church,ENGLISH', 'Test User1', '', 'Промислова вулиця, 3', '98400-98408', 'городское поселение Бахчисарай', 'ukraine', '', '', '', '', '', NULL, 0, NULL);
+INSERT INTO `tb_members` VALUES (4, 'Evangelist,DEUTSCH', 'Test User2', '', 'Zimmerpforte 5', '20099', 'Hamburg', 'germany', '', '', '', '', '', NULL, 0, NULL);
+INSERT INTO `tb_members` VALUES (5, 'Evangelist,ENGLISHE', 'Test Member', 'Upwork', 'Kindiyskoye highway', '73000-73480', 'Kherson', 'ukraine', '1234567890', '1234567890', 'https://www.example.com', 'https://www.example.com', 'https://www.example.com', NULL, 0, NULL);
+INSERT INTO `tb_members` VALUES (6, 'newBorn,DEUTSCH', 'Member3', 'Upwork', 'Kindiyskoye highway', '73000-73480', 'Kherson', 'ukraine', '123456789', '1234567890', 'https://www.example.com', 'https://www.example.com', 'https://www.example.com', NULL, 0, NULL);
+INSERT INTO `tb_members` VALUES (7, '', 'yyyy', '', '', '', '', '', '', '', '', '', '', NULL, 0, NULL);
+INSERT INTO `tb_members` VALUES (8, '', 'Test', '', '', '', '', '', '', '', '', '', '', NULL, 0, 0);
 
---
--- Table structure for table `tb_members`
---
+-- ----------------------------
+-- Table structure for tb_types
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_types`;
+CREATE TABLE `tb_types`  (
+  `type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `langu` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `descript` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `generatecode` tinyint NULL DEFAULT NULL,
+  PRIMARY KEY (`type`, `langu`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
-CREATE TABLE `tb_members` (
-  `usernr` int(11) NOT NULL,
-  `type` varchar(20) NOT NULL,
-  `fullname` varchar(60) NOT NULL,
-  `organization` varchar(70) DEFAULT NULL,
-  `street` varchar(70) DEFAULT NULL,
-  `zip` varchar(30) NOT NULL,
-  `city` varchar(50) NOT NULL,
-  `country` varchar(50) NOT NULL,
-  `cellphone` varchar(50) DEFAULT NULL,
-  `telephone` varchar(50) DEFAULT NULL,
-  `instagram` varchar(100) DEFAULT NULL,
-  `facebook` varchar(100) DEFAULT NULL,
-  `website` varchar(100) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- ----------------------------
+-- Records of tb_types
+-- ----------------------------
+INSERT INTO `tb_types` VALUES ('Church', 'deutsch', 'Gemeinde', 1);
+INSERT INTO `tb_types` VALUES ('Church', 'english', 'Church', 1);
+INSERT INTO `tb_types` VALUES ('Evangelist', 'deutsch', 'Evangelist', 0);
+INSERT INTO `tb_types` VALUES ('Evangelist', 'english', 'Evangelist', 0);
+INSERT INTO `tb_types` VALUES ('newBorn', 'deutsch', 'Neugeborener Christ', 0);
+INSERT INTO `tb_types` VALUES ('newBorn', 'english', 'New Christian', 0);
 
---
--- Dumping data for table `tb_members`
---
+-- ----------------------------
+-- Table structure for tb_users
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_users`;
+CREATE TABLE `tb_users`  (
+  `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `password` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `usernr` int NOT NULL AUTO_INCREMENT,
+  `rcode` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `active` tinyint NOT NULL,
+  `admin` tinyint NOT NULL,
+  PRIMARY KEY (`email`) USING BTREE,
+  INDEX `usernr`(`usernr` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
-INSERT INTO `tb_members` (`usernr`, `type`, `fullname`, `organization`, `street`, `zip`, `city`, `country`, `cellphone`, `telephone`, `instagram`, `facebook`, `website`) VALUES
-(101, 'Individual', 'John Doe', 'Company A', '123 Main St', '12345', 'City A', 'Country A', '123-456-7890', '987-654-3210', 'john_insta', 'john_facebook', 'http://johnwebsite.com'),
-(102, 'Organization', 'Jane Smith', 'Company B', '456 Oak St', '67890', 'City B', 'Country B', '987-654-3210', '123-456-7890', 'jane_insta', 'jane_facebook', 'http://janewebsite.com'),
-(110, 'Individual', 'Bob Johnson', 'Company C', '789 Elm St', '54321', 'City C', 'Country C', '234-567-8901', '876-543-2109', 'bob_insta', 'bob_facebook', 'http://bobwebsite.com');
+-- ----------------------------
+-- Records of tb_users
+-- ----------------------------
+INSERT INTO `tb_users` VALUES ('test11@gmail.com', 'e0cea4bb45e36c115356e46910c354af', 1, '', 1, 1);
+INSERT INTO `tb_users` VALUES ('test123@gmail.com', 'e0cea4bb45e36c115356e46910c354af', 5, '', 1, 0);
+INSERT INTO `tb_users` VALUES ('test13@gmail.com', '0f6c69dc4b698d8537c378c7fe88ce02', 7, '7a9da8265fb91010104db7d935b81443', 0, 0);
+INSERT INTO `tb_users` VALUES ('test1@gmail.com', 'e0cea4bb45e36c115356e46910c354af', 3, '', 1, 0);
+INSERT INTO `tb_users` VALUES ('test2@gmail.com', 'e0cea4bb45e36c115356e46910c354af', 4, '', 1, 0);
+INSERT INTO `tb_users` VALUES ('test333@gmail.com', 'e0cea4bb45e36c115356e46910c354af', 6, '', 1, 0);
+INSERT INTO `tb_users` VALUES ('toflyinsky.dev919@gmail.com', '0f6c69dc4b698d8537c378c7fe88ce02', 8, '', 0, 0);
 
--- --------------------------------------------------------
-
---
--- Table structure for table `tb_types`
---
-
-CREATE TABLE `tb_types` (
-  `type` varchar(20) NOT NULL,
-  `langu` varchar(20) NOT NULL,
-  `descript` varchar(50) NOT NULL,
-  `generatecode` tinyint(4) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tb_users`
---
-
-CREATE TABLE `tb_users` (
-  `usernr` int(11) NOT NULL,
-  `email` varchar(50) NOT NULL,
-  `password` varchar(100) NOT NULL,
-  `code` varchar(50) NOT NULL,
-  `active` tinyint(4) NOT NULL,
-  `admin` tinyint(4) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tb_users`
---
-
-INSERT INTO `tb_users` (`usernr`, `email`, `password`, `code`, `active`, `admin`) VALUES
-(101, 'user1@example.com', 'password1', 'code1', 1, 0),
-(102, 'user2@example.com', 'password2', 'code2', 1, 0),
-(103, 'user3@example.com', 'password3', 'code3', 1, 0),
-(104, 'user4@example.com', 'password4', 'code4', 1, 0),
-(105, 'user5@example.com', 'password5', 'code5', 1, 0),
-(201, 'admin1@example.com', 'adminpass1', 'admincode1', 1, 1),
-(202, 'admin2@example.com', 'adminpass2', 'admincode2', 1, 1),
-(203, 'admin3@example.com', 'adminpass3', 'admincode3', 1, 1),
-(204, 'admin4@example.com', 'adminpass4', 'admincode4', 1, 1),
-(205, 'admin5@example.com', 'adminpass5', 'admincode5', 1, 1),
-(212, 'golden.starr1997@gmail.com', '134568be038d8b03f2cc251cda8b64b6', '8b376cb7211c7cabdc09e23aae78ad82', 0, 0),
-(213, 'skype.inner@gmail.com', '134568be038d8b03f2cc251cda8b64b6', '56d70ee573a1d106e89f4efa1a9d53ad', 0, 0);
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `tb_connection`
---
-ALTER TABLE `tb_connection`
-  ADD PRIMARY KEY (`usernr1`,`usernr2`);
-
---
--- Indexes for table `tb_evangel`
---
-ALTER TABLE `tb_evangel`
-  ADD PRIMARY KEY (`langu`,`descript`);
-
---
--- Indexes for table `tb_event`
---
-ALTER TABLE `tb_event`
-  ADD PRIMARY KEY (`eventnr`);
-
---
--- Indexes for table `tb_event_att`
---
-ALTER TABLE `tb_event_att`
-  ADD PRIMARY KEY (`eventnr`,`usernr`);
-
---
--- Indexes for table `tb_members`
---
-ALTER TABLE `tb_members`
-  ADD PRIMARY KEY (`usernr`);
-
---
--- Indexes for table `tb_types`
---
-ALTER TABLE `tb_types`
-  ADD PRIMARY KEY (`type`,`langu`);
-
---
--- Indexes for table `tb_users`
---
-ALTER TABLE `tb_users`
-  ADD PRIMARY KEY (`usernr`),
-  ADD KEY `usernr` (`usernr`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `tb_users`
---
-ALTER TABLE `tb_users`
-  MODIFY `usernr` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=214;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+SET FOREIGN_KEY_CHECKS = 1;
