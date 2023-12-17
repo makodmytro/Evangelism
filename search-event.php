@@ -51,9 +51,14 @@ if (isset($_POST['submit'])) {
         <div class="border border-1 border-solid pt-4 pb-4 position-relative">
             <button class="btn btn-primary position-absolute" data-bs-toggle="modal" data-bs-target="#addFilterModal"
                 style="top: -20px; left: 10px">Filters</button>
-            <div class="mt-2 ms-5">Name of Event:&nbsp;
-                <?= $search_name ?>&nbsp;&nbsp;&nbsp;Zip code:
-                <?= $search_zip ?>
+            <div class="mt-2 ms-5">
+                <?php if ($sname != '') { ?>Name of Event:&nbsp;<?= $sname ?>&nbsp;&nbsp;&nbsp;<?php } ?>
+                <?php if ($szip != '') { ?>Zip code:&nbsp;<?= $szip ?>&nbsp;&nbsp;&nbsp;<?php } ?>
+                <?php if ($sorg != '') { ?>Organization:&nbsp;<?= $sorg ?>&nbsp;&nbsp;&nbsp;<?php } ?>
+                <?php if ($scity != '') { ?>City:&nbsp;<?= $scity ?>&nbsp;&nbsp;&nbsp;<?php } ?>
+                <?php if ($scountry != '') { ?>Country:&nbsp;<?= $scountry ?>&nbsp;&nbsp;&nbsp;<?php } ?>
+                <?php if ($sstartDate != '') { ?>Start Date:&nbsp;<?= $sstartDate ?>&nbsp;&nbsp;&nbsp;<?php } ?>
+                <?php if ($sendDate != '') { ?>End Date:&nbsp;<?= $sendDate ?>&nbsp;&nbsp;&nbsp;<?php } ?>
             </div>
             <div class="mt-3">
                 <?php $lop = 0;
@@ -64,22 +69,22 @@ if (isset($_POST['submit'])) {
                             <div class="member-image cursor-pointer" onclick="gotoMemberDetail(<?= $row['eventnr'] ?>)"><img src="assets/images/events.png" alt=""></div>
                             <div class="member-info">
                                 <div>
-                                    <?= $row["fullname"] ?>
+                                    <?= $row["fullname"] ?>-
                                 </div>
                                 <div>
-                                    <?= $row["zip"] ?>
+                                    <?= $row["zip"] ?>,
                                 </div>
                                 <div>
-                                    <?= $row["city"] ?>
+                                    <?= $row["city"] ?>,
                                 </div>
                                 <div>
-                                    <?= strtoupper($row["country"]) ?>
+                                    <?= strtoupper($row["country"]) ?>,
                                 </div>
                                 <div>
-                                    <?= $row["cellphone"] ?>
+                                    <?= $row["cellphone"] ?>,
                                 </div>
                                 <div>
-                                    <?= $row["begindate"] ?>
+                                    <?= $row["begindate"] ?>,
                                 </div>
                                 <div>
                                     <?= $row["enddate"] ?>
