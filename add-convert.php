@@ -61,8 +61,8 @@ if (isset($_POST['submit'])) {
                         <?php } ?>
                     </select>
                     <input type="text" class="form-control mt-3" name="cellphone" placeholder="Enter Your Cellphone">
-                    <input type="text" class="form-control mt-3" name="website" placeholder="Enter Your Website">
                     <input type="text" class="form-control mt-3" name="telephone" placeholder="Enter Your Telephone">
+                    <input type="text" class="form-control mt-3" name="website" placeholder="Enter Your Website">
                     <input type="text" class="form-control mt-3" name="instagram" placeholder="Enter Your Instagram">
                     <input type="text" class="form-control mt-3" name="facebook" placeholder="Enter Your Facebook">
                 </div>

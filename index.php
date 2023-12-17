@@ -25,18 +25,25 @@
             if (empty($user['code'])) {
                 $_SESSION['SESSION_EMAIL'] = $email;
                 if($user['usernr']) {
-                    $res_user = select_userById($conn, $user['usernr']);
-                    $uuser = mysqli_fetch_assoc($res_user);
-                    $_SESSION['fullname'] = $uuser['fullname'];
-                    $_SESSION['street'] = $uuser['street'];
-                    $_SESSION['city'] = $uuser['city'];
-                    $_SESSION['country'] = $uuser['country'];
-                    if(isUsernrExistsInMembers($conn, $user['usernr']) && $user["active"] == 1) {
-                        header("Location: home.php");
-                        die();
-                    } else {
+                    $m_usernr = $user["usernr"];
+                    $activeRes = mysqli_query($conn, "SELECT * FROM tb_users WHERE usernr = '{$m_usernr}'");
+                    $m_active = mysqli_fetch_assoc($activeRes)['active'];
+                    if($m_active == 1) {
+                        $res_user = select_userById($conn, $user['usernr']);
+                        $uuser = mysqli_fetch_assoc($res_user);
+                        $_SESSION['fullname'] = $uuser['fullname'];
+                        $_SESSION['street'] = $uuser['street'];
+                        $_SESSION['city'] = $uuser['city'];
+                        $_SESSION['country'] = $uuser['country'];
+                        if(isUsernrExistsInMembers($conn, $user['usernr']) && $user["active"] == 1) {
+                            header("Location: home.php");
+                            die();
+                        } else {
                         header('Location: register-member.php');
                         die();
+                        }
+                    } else {
+                        $msg = "<div class='alert alert-warning'>User account is deactived</div>";
                     }
                 } else {
                     $msg = "<div class='alert alert-warning'>Something went wrong.</div>";
