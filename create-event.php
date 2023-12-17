@@ -17,7 +17,8 @@ if (isset($_POST['submit'])) {
     $zip = mysqli_real_escape_string($conn, $_POST['zip']);
     $city = mysqli_real_escape_string($conn, $_POST['city']);
     $country = mysqli_real_escape_string($conn, $_POST['country']);
-    $eventDate = mysqli_real_escape_string($conn, $_POST['eventDate']);
+    $eventDateBegin = mysqli_real_escape_string($conn, $_POST['eventDateBegin']);
+    $eventDateEnd = mysqli_real_escape_string($conn, $_POST['eventDateEnd']);
     $website = mysqli_real_escape_string($conn, $_POST['website']);
     $facebook = mysqli_real_escape_string($conn, $_POST['facebook']);
     $instagram = mysqli_real_escape_string($conn, $_POST['instagram']);
@@ -27,7 +28,7 @@ if (isset($_POST['submit'])) {
     if($_SESSION["usernr"]){
         $usernr = $_SESSION["usernr"];
         try {
-            $res = create_event($conn, $usernr, $event, $street, $zip, $city, $country, $eventDate, $message, $kmRadius, $website);
+            $res = create_event($conn, $usernr, $event, $street, $zip, $city, $country, $eventDateBegin, $$eventDateEnd, $message, $kmRadius, $website);
             if($res){
                 $msg = "<div class='alert alert-success'>Success create a new event</div>";
             }
@@ -66,7 +67,10 @@ if (isset($_POST['submit'])) {
                             </option>
                         <?php } ?>
                     </select>
-                    <input type="text" class="form-control mt-3" name="eventDate" id="datepicker" placeholder="Enter Your Dates of Event" required>
+                    <div class="d-flex gap-3">
+                        <input type="text" class="form-control mt-3" name="eventDateBegin" id="datepicker" placeholder="Enter Your Begin Date of Event" required>
+                        <input type="text" class="form-control mt-3" name="eventDateEnd" id="datepicker1" placeholder="Enter Your End Date of Event" required>
+                    </div>
                     <input type="text" class="form-control mt-3" name="website" placeholder="Enter Your Website">
                     <input type="text" class="form-control mt-3" name="facebook" placeholder="Enter Your Facebook">
                     <input type="text" class="form-control mt-3" name="instagram" placeholder="Enter Your Instagram">
@@ -86,6 +90,7 @@ if (isset($_POST['submit'])) {
         $(function () {
             // Attach the datepicker to the input field with the id "datepicker"
             $("#datepicker").datepicker();
+            $("#datepicker1").datepicker();
         });
     </script>
 

@@ -205,10 +205,10 @@ function update_profile($conn, $type, $fullname, $email, $organization, $passwor
     }
 }
 
-function create_event($conn, $usernr, $name, $street, $zip, $city, $country, $dateofevent, $invitetxt, $radiuskm, $web)
+function create_event($conn, $usernr, $name, $street, $zip, $city, $country, $dateofevent, $dateofeventEnd, $invitetxt, $radiuskm, $web)
 {
     $query = "INSERT INTO tb_event (usernr, name, street, zip, city, country, begindate, enddate, invitetxt, radiuskm, web, sendout)
-    VALUES ('{$usernr}', '{$name}', '{$street}', '{$zip}', '{$city}', '{$country}', '{$dateofevent}', '', '{$invitetxt}', '{$radiuskm}', '{$web}', 0);";
+    VALUES ('{$usernr}', '{$name}', '{$street}', '{$zip}', '{$city}', '{$country}', '{$dateofevent}', '{$dateofeventEnd}', '{$invitetxt}', '{$radiuskm}', '{$web}', 0);";
     return mysqli_query($conn, $query);
 }
 
