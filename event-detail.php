@@ -238,7 +238,9 @@ include 'inc/nav.php'
             <form action="" method="POST">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Request Connection</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">
+                            <?php if ($addInfo->num_rows > 0) { echo "Remove me from this event"; } else { echo "Add me to this event"; } ?>
+                        </h5>
                     </div>
                     <div class="modal-footer justify-content-center pt-5 pb-3">
                         <button type="button" class="btn btn-default px-5" data-bs-dismiss="modal">No</button>
