@@ -15,6 +15,8 @@ if ($_GET["usernr"]) {
 try {
     $res = select_userById($conn, $m_usernr);
     $e_user = mysqli_fetch_assoc($res);
+    $activeRes = mysqli_query($conn, "SELECT * FROM tb_users WHERE usernr = '{$m_usernr}'");
+    $m_active = mysqli_fetch_assoc($activeRes)['active'];
 } catch (\Throwable $th) {
     $msg = "<div class='alert alert-danger'>{$th->getMessage()}</div>";
 }
@@ -34,6 +36,8 @@ if (isset($_POST["deactive"])) {
     try {
         $res = select_userById($conn, $m_usernr);
         $e_user = mysqli_fetch_assoc($res);
+        $activeRes = mysqli_query($conn, "SELECT * FROM tb_users WHERE usernr = '{$m_usernr}'");
+        $m_active = mysqli_fetch_assoc($activeRes)['active'];
     } catch (\Throwable $th) {
         $msg = "<div class='alert alert-danger'>{$th->getMessage()}</div>";
     }
@@ -43,6 +47,8 @@ if (isset($_POST["active"])) {
     try {
         $res = select_userById($conn, $m_usernr);
         $e_user = mysqli_fetch_assoc($res);
+        $activeRes = mysqli_query($conn, "SELECT * FROM tb_users WHERE usernr = '{$m_usernr}'");
+        $m_active = mysqli_fetch_assoc($activeRes)['active'];
     } catch (\Throwable $th) {
         $msg = "<div class='alert alert-danger'>{$th->getMessage()}</div>";
     }
@@ -50,7 +56,7 @@ if (isset($_POST["active"])) {
 
 if (isset($_POST["memberDisconnect"])) {
     delete_connectMembers($conn, $_SESSION['usernr'], $m_usernr);
-    
+
     $res_connect = select_connectMembers($conn, $_SESSION['usernr'], $m_usernr);
     $conn_stt = $res_connect->num_rows == 0 ? false : true;
     if ($conn_stt) {
@@ -184,7 +190,7 @@ if (isset($_POST["send_whatsapp"])) {
                         </div>
                     </div>
                 </button>
-                <button class="btn btn-default mx-auto w-75 mt-1 mb-1" <?php if(($conn_stt && $sql_stt) || !$conn_stt) { ?> data-bs-toggle="modal" data-bs-target="#allowModal" <?php } ?>>
+                <button class="btn btn-default mx-auto w-75 mt-1 mb-1" <?php if (($conn_stt && $sql_stt) || !$conn_stt) { ?> data-bs-toggle="modal" data-bs-target="#allowModal" <?php } ?>>
                     <?php if ($conn_stt && $sql_stt) { ?>
                         <div class="d-flex justify-content-center">
                             <div>
@@ -194,7 +200,7 @@ if (isset($_POST["send_whatsapp"])) {
                                 &nbsp;&nbsp;&nbsp;Remove
                             </div>
                         </div>
-                    <?php } else if($conn_stt && !$sql_stt) { ?>
+                    <?php } else if ($conn_stt && !$sql_stt) { ?>
                         <div class="d-flex justify-content-center">
                             <div>
                                 <img src="<?= DOMAIN ?>/assets/images/connectionOne.png" alt="">
@@ -217,12 +223,21 @@ if (isset($_POST["send_whatsapp"])) {
                 <?php if ($_SESSION["admin"]) { ?>
                     <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#activeModal">
                         <div class="d-flex justify-content-center">
-                            <div>
-                                <img src="<?= DOMAIN ?>/assets/images/active.png" alt="">
-                            </div>
-                            <div class="d-flex justify-content-center align-items-center">
-                                &nbsp;&nbsp;&nbsp;<?= $e_user["active"] ?>Activate
-                            </div>
+                            <?php if ($m_active == 1) { ?>
+                                <div>
+                                    <img src="<?= DOMAIN ?>/assets/images/deactive.png" alt="">
+                                </div>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    &nbsp;&nbsp;&nbsp;Deactivate
+                                </div>
+                            <?php } else { ?>
+                                <div>
+                                    <img src="<?= DOMAIN ?>/assets/images/active.png" alt="">
+                                </div>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    &nbsp;&nbsp;&nbsp;Activate
+                                </div>
+                            <?php } ?>
                         </div>
                     </button>
                 <?php } ?>
@@ -321,12 +336,12 @@ if (isset($_POST["send_whatsapp"])) {
                     </div>
                     <div class="modal-footer justify-content-center pt-5 pb-3">
                         <button type="button" class="btn btn-default px-5" data-bs-dismiss="modal">No</button>
-                        <button type="submit" name="<?php
-                                                    if ($e_user["active"] == 1) {
-                                                        echo 'deactive';
-                                                    } else {
-                                                        echo 'active';
-                                                    } ?>" class="btn btn-default px-5" data-bs-dismiss="modal">Yes</button>
+                        <button type="submit" <?php
+                                                if ($m_active == 1) {
+                                                    echo 'name="deactive"';
+                                                } else {
+                                                    echo 'name="active"';
+                                                } ?> class="btn btn-default px-5" data-bs-dismiss="modal">Yes</button>
                     </div>
                 </div>
             </form>
