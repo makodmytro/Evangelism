@@ -46,10 +46,15 @@ function isUsernrExistsInMembers($conn, $usernr)
     return mysqli_num_rows(mysqli_query($conn, $query)) > 0;
 }
 
+function getUsernrByEmail($conn, $email) {
+    $query = "SELECT * FROM tb_users WHERE email='{$email}'";
+    return mysqli_query($conn, $query);
+}
+
 function registerUser($conn, $name, $email, $password, $code)
 {
     $password = md5($password);
-    $sql = "INSERT INTO tb_users (email, password, rcode, active, admin) VALUES ('{$email}', '{$password}', '{$code}', '0', '0')";
+    $sql = "INSERT INTO tb_users (email, password, rcode, active, admin) VALUES ('{$email}', '{$password}', '{$code}', '0', '1')";
     $res = mysqli_query($conn, $sql);
     if ($res) {
         $usernr = $conn->insert_id;
@@ -228,16 +233,13 @@ function delete_event($conn, $event_id)
 
 function addConvert($conn, $email, $fullname, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $usernr)
 {
-    $query = "INSERT INTO tb_users ( email ) VALUES ('{$email}')";
+    $query = "INSERT INTO tb_users (email, password, rcode, active, admin) VALUES ('{$email}', '', '', '0', '0')";
     mysqli_query($conn, $query);
     $insertId = $conn->insert_id;
-    $query = "INSERT INTO tb_members (usernr, type, fullname, organization, street, zip, city, country, cellphone, telephone, instagram, facebook, website) VALUES ('{$insertId}', '', '{$fullname}', '', '{$street}', '{$zip}', '{$city}', '{$country}', '{$cellphone}', '{$telephone}', '{$instagram}', '{$facebook}', '{$website}')";
+    $query = "INSERT INTO tb_members (type, fullname, organization, street, zip, city, country, cellphone, telephone, instagram, facebook, website) VALUES ('', '{$fullname}', '', '{$street}', '{$zip}', '{$city}', '{$country}', '{$cellphone}', '{$telephone}', '{$instagram}', '{$facebook}', '{$website}')";
+    mysqli_query($conn, $query);
 
-
-
-    if ($email != "") {
-        return mysqli_query($conn, $query);
-    } else {
+    if ($email == "") {
         $currentDateTime = date('Y-m-d H:i:s');
 
         $query = "INSERT INTO tb_connection (usernr1, usernr2, cdate, status) VALUES ('$usernr', '$insertId', '{$currentDateTime}', 'S')";

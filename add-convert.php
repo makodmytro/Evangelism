@@ -26,7 +26,7 @@ if (isset($_POST['submit'])) {
     if ($cellphone || $telephone) {
 
     } else {
-        if (isEmailExists($conn, $email)) {
+        if (isEmailExists($conn, $email) && $email != "") {
             $msg = "<div class='alert alert-danger'>{$email} - This email address already exists.</div>";
         } else {
             $res = addConvert($conn, $email, $fullname, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $_SESSION["usernr"]);
@@ -98,7 +98,7 @@ if (isset($_POST['submit'])) {
                         <h5 class="modal-title" id="exampleModalLabel">Message was send</h5>
                     </div>
                     <div class="modal-body">
-                        Your message has been send
+                        Successfully added.
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default px-5" data-bs-dismiss="modal">OK</button>

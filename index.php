@@ -1,8 +1,13 @@
 <?php include 'inc/pre.php' ?>
 <?php
     if (isset($_SESSION['SESSION_EMAIL'])) {
-        header("Location: home.php");
-        die();
+        $usernrByEmailRes = getUsernrByEmail($conn, $_SESSION['SESSION_EMAIL']);
+        $usernrByEmail = mysqli_fetch_assoc($usernrByEmailRes)['usernr'];
+        $activeByEmail = mysqli_fetch_assoc($usernrByEmailRes)['active'];
+        if(isUsernrExistsInMembers($conn, $usernrByEmail) && $activeByEmail == 1) {
+            header("Location: home.php");
+            die();
+        }
     }
     $msg = "";
     if (isset($_GET['verification'])) {

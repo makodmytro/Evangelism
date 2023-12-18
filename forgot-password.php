@@ -5,8 +5,13 @@ include 'inc/header.php';
 $msg = "";
 
 if (isset($_SESSION['SESSION_EMAIL'])) {
-  header("Location: home.php");
-  die();
+  $usernrByEmailRes = getUsernrByEmail($conn, $_SESSION['SESSION_EMAIL']);
+  $usernrByEmail = mysqli_fetch_assoc($usernrByEmailRes)['usernr'];
+  $activeByEmail = mysqli_fetch_assoc($usernrByEmailRes)['active'];
+  if(isUsernrExistsInMembers($conn, $usernrByEmail) && $activeByEmail == 1) {
+      header("Location: home.php");
+      die();
+  }
 }
 
 if (isset($_POST['submit'])) {
