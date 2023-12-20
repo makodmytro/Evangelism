@@ -109,6 +109,16 @@ include 'inc/nav.php'
                 <h6><?= $detail_event["country"] ?></h6>
                 <h6><?= $detail_event["cellphone"] ?></h6>
                 <hr>
+                <?php if($detail_event['usernr'] == $_SESSION['usernr']) { ?>
+                    <button class="btn btn-default mx-auto w-75 mt-1 mb-1" onclick="gotoEditEvent()">
+                        <div class="d-flex justify-content-center">
+                            <div>
+                                <img src='<?php echo DOMAIN . "/assets/images/events.png"; ?>' alt="" />
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center">&nbsp;&nbsp;&nbsp;Edit Event</div>
+                        </div>
+                    </button>
+                <?php } ?>
                 <?php if($detail_event['usernr'] != $_SESSION['usernr']) { ?>
                 <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#emailModal">
                     <div class="d-flex justify-content-center">
@@ -337,6 +347,10 @@ include 'inc/nav.php'
 
     function gotoEvent() {
         window.location.href = "<?= DOMAIN ?>/search-event.php"
+    }
+
+    function gotoEditEvent() {
+        window.location.href = "<?= DOMAIN ?>/edit-event.php?eventnr=<?= $detail_event['eventnr'] ?>"
     }
 
     function gotoMemberDetail(id) {

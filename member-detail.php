@@ -54,7 +54,7 @@ if (isset($_POST["active"])) {
     }
 }
 
-if (isset($_POST["memberDisconnect"])) {
+if (isset($_POST["memberDisconnect"]) || isset($_POST['memberConnectRemove'])) {
     delete_connectMembers($conn, $_SESSION['usernr'], $m_usernr);
 
     $res_connect = select_connectMembers($conn, $_SESSION['usernr'], $m_usernr);
@@ -170,16 +170,18 @@ if (isset($_POST["send_whatsapp"])) {
                     <?= $e_user['telephone'] ?>
                 </h6>
                 <hr>
-                <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#emailModal">
-                    <div class="d-flex justify-content-center">
-                        <div>
-                            <img src="<?= DOMAIN ?>/assets/images/email.png" alt="">
+                <?php if ($e_user['usernr'] != $_SESSION['usernr']) { ?>
+                    <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#emailModal">
+                        <div class="d-flex justify-content-center">
+                            <div>
+                                <img src="<?= DOMAIN ?>/assets/images/email.png" alt="">
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center">
+                                &nbsp;&nbsp;&nbsp;Email
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-center align-items-center">
-                            &nbsp;&nbsp;&nbsp;Email
-                        </div>
-                    </div>
-                </button>
+                    </button>
+                <?php } ?>
                 <?php if ($e_user['whatsappcode']) { ?>
                     <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#whatsappModal">
                         <div class="d-flex justify-content-center">
@@ -202,36 +204,38 @@ if (isset($_POST["send_whatsapp"])) {
                         </div>
                     </div>
                 </button>
-                <button class="btn btn-default mx-auto w-75 mt-1 mb-1" <?php if (($conn_stt && $sql_stt) || !$conn_stt) { ?> data-bs-toggle="modal" data-bs-target="#allowModal" <?php } ?>>
-                    <?php if ($conn_stt && $sql_stt) { ?>
-                        <div class="d-flex justify-content-center">
-                            <div>
-                                <img src="<?= DOMAIN ?>/assets/images/connection.png" alt="">
+                <?php if ($e_user['usernr'] != $_SESSION['usernr']) { ?>
+                    <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#allowModal">
+                        <?php if ($conn_stt && $sql_stt) { ?>
+                            <div class="d-flex justify-content-center">
+                                <div>
+                                    <img src="<?= DOMAIN ?>/assets/images/connection.png" alt="">
+                                </div>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    &nbsp;&nbsp;&nbsp;Remove
+                                </div>
                             </div>
-                            <div class="d-flex justify-content-center align-items-center">
-                                &nbsp;&nbsp;&nbsp;Remove
+                        <?php } else if ($conn_stt && !$sql_stt) { ?>
+                            <div class="d-flex justify-content-center">
+                                <div>
+                                    <img src="<?= DOMAIN ?>/assets/images/connectionOne.png" alt="">
+                                </div>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    &nbsp;&nbsp;&nbsp;Remove
+                                </div>
                             </div>
-                        </div>
-                    <?php } else if ($conn_stt && !$sql_stt) { ?>
-                        <div class="d-flex justify-content-center">
-                            <div>
-                                <img src="<?= DOMAIN ?>/assets/images/connectionOne.png" alt="">
+                        <?php } else { ?>
+                            <div class="d-flex justify-content-center">
+                                <div>
+                                    <img src="<?= DOMAIN ?>/assets/images/connection.png" alt="">
+                                </div>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    &nbsp;&nbsp;&nbsp;Connect
+                                </div>
                             </div>
-                            <div class="d-flex justify-content-center align-items-center">
-                                &nbsp;&nbsp;&nbsp;Remove
-                            </div>
-                        </div>
-                    <?php } else { ?>
-                        <div class="d-flex justify-content-center">
-                            <div>
-                                <img src="<?= DOMAIN ?>/assets/images/connection.png" alt="">
-                            </div>
-                            <div class="d-flex justify-content-center align-items-center">
-                                &nbsp;&nbsp;&nbsp;Connect
-                            </div>
-                        </div>
-                    <?php } ?>
-                </button>
+                        <?php } ?>
+                    </button>
+                <?php } ?>
                 <?php if ($_SESSION["admin"]) { ?>
                     <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#activeModal">
                         <div class="d-flex justify-content-center">
@@ -324,12 +328,22 @@ if (isset($_POST["send_whatsapp"])) {
             <form action="" method="post">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Request Connection</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">
+                            <?php if ($conn_stt && $sql_stt) {
+                                echo 'Request Disconnection';
+                            } else if ($conn_stt && !$sql_stt) {
+                                echo 'Request Remove Connection';
+                            } else {
+                                echo 'Request Connection';
+                            } ?>
+                        </h5>
                     </div>
                     <div class="modal-footer justify-content-center pt-5 pb-3">
                         <button type="button" class="btn btn-default px-5" data-bs-dismiss="modal">No</button>
                         <button type="submit" <?php if ($conn_stt && $sql_stt) {
                                                     echo 'name="memberDisconnect"';
+                                                } else if ($conn_stt && !$sql_stt) {
+                                                    echo 'name="memberConnectRemove"';
                                                 } else {
                                                     echo 'name="memberConnect"';
                                                 } ?> class="btn btn-default px-5" data-bs-dismiss="modal">Yes</button>

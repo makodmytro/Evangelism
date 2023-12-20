@@ -223,6 +223,27 @@ function create_event($conn, $usernr, $name, $street, $zip, $city, $country, $da
     return mysqli_query($conn, $query);
 }
 
+function update_event($conn, $eventnr, $name, $street, $zip, $city, $country, $dateofevent, $dateofeventEnd, $invitetxt, $radiuskm, $web, $facebook, $instagram) {
+    $query = "UPDATE tb_event
+    SET 
+        tb_event.name = '{$name}',
+        tb_event.street = '{$street}',
+        tb_event.zip = '{$zip}',
+        tb_event.city = '{$city}',
+        tb_event.country = '{$country}',
+        tb_event.begindate = '{$dateofevent}',
+        tb_event.enddate = '{$dateofeventEnd}',
+        tb_event.invitetxt = '{$invitetxt}',
+        tb_event.radiuskm = '{$radiuskm}',
+        tb_event.web = '{$web}',
+        tb_event.facebook = '{$facebook}',
+        tb_event.instagram = '{$instagram}'
+    WHERE 
+        tb_event.eventnr = '{$eventnr}'";
+    
+    return mysqli_query($conn, $query);
+}
+
 function read_event($conn, $event_id)
 {
     $query = "";
