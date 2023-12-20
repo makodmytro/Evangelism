@@ -255,7 +255,7 @@ function addConvert($conn, $email, $fullname, $street, $zip, $city, $country, $c
 
 function select_members($conn, $s_type, $s_fullname, $s_organization, $s_zip, $s_city, $s_country)
 {
-    $query = "SELECT * FROM tb_users JOIN tb_members ON tb_users.usernr = tb_members.usernr WHERE tb_users.active = '1' AND tb_members.fullname LIKE '%{$s_fullname}%' AND tb_members.zip LIKE '%{$s_zip}%' AND tb_members.type LIKE '%{$s_type}%' AND tb_members.organization LIKE '%{$s_organization}%' AND tb_members.city LIKE '%{$s_city}%' AND tb_members.country LIKE '%{$s_country}%'";
+    $query = "SELECT * FROM tb_users JOIN tb_members ON tb_users.usernr = tb_members.usernr WHERE tb_users.active = '1' AND tb_members.fullname LIKE '%{$s_fullname}%' AND tb_members.zip LIKE '%{$s_zip}%' AND tb_members.type LIKE '%{$s_type}%' AND tb_members.organization LIKE '%{$s_organization}%' AND tb_members.city LIKE '%{$s_city}%' AND tb_members.country LIKE '%{$s_country}%' AND tb_members.active = 1";
     return mysqli_query($conn, $query);
 }
 
@@ -270,7 +270,8 @@ function select_membersToMe($conn, $s_type, $s_fullname, $s_organization, $s_zip
         AND tb_members.type LIKE '%{$s_type}%'
         AND tb_members.organization LIKE '%{$s_organization}%'
         AND tb_members.city LIKE '%{$s_city}%'
-        AND tb_members.country LIKE '%{$s_country}%';";
+        AND tb_members.country LIKE '%{$s_country}%'
+        AND tb_members.active = 1";
     return mysqli_query($conn, $query);
 }
 

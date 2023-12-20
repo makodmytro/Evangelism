@@ -1,9 +1,9 @@
-<?php include 'inc/pre.php' ?>
 <?php
+include 'inc/pre.php';
+include 'inc/header.php';
 $navTitle = "Edit Profile";
 include 'inc/nav.php';
-?>
-<?php
+
 if (!isset($_SESSION["SESSION_EMAIL"])) {
     header("Location: index.php");
 }
@@ -87,7 +87,6 @@ if (isset($_POST['submit'])) {
         }
     }
 }
-include 'inc/header.php';
 ?>
 
 
@@ -135,5 +134,11 @@ include 'inc/header.php';
         </form>
     </div>
 </section>
+
+<script>
+    function gotoHomepage() {
+        window.location.href = "<?= DOMAIN ?>/home.php";
+    }
+</script>
 
 <?php include 'inc/footer.php' ?>
