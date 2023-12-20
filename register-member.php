@@ -35,7 +35,7 @@ if (isset($_POST['register'])) {
     $password = mysqli_real_escape_string($conn, $_POST['password']);
     $confirm_password = mysqli_real_escape_string($conn, $_POST['confirm_password']);
 
-    $msg = 'sdfsdfsdf';
+    $msg = '';
 
       // Validate password strength
     if($password === ''){

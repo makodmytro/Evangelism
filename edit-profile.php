@@ -120,7 +120,7 @@ if (isset($_POST['submit'])) {
                 <div class="col-lg-4 col-md-12 border border-1 border-solid px-4 pt-3 pb-3 mb-5 text-break">
                     <select type="text" class="form-control mt-3" name="type" style="padding: 12px" required>
                         <?php while ($row1 = $types->fetch_assoc()) { ?>
-                            <option value="<?= $row1['type'] . ',' . strtoupper($row1['langu']) ?>" <?php echo ($row1["type"] == $row1["type"] . ',' . strtoupper($row1["langu"])) ? 'selected' : ''; ?>><?= $row1["descript"] ?></option>
+                            <option value="<?= $row1['type'] ?>" <?php echo ($row1["type"] == $row1["type"] . ',' . strtoupper($row1["langu"])) ? 'selected' : ''; ?>><?= $row1["descript"] ?></option>
                         <?php } ?>
                     </select>
                     <input type="text" class="form-control mt-3" name="fullname" placeholder="Enter Your Full Name" value="<?= $row["fullname"] ?>">
