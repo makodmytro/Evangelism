@@ -202,7 +202,8 @@ function update_profile($conn, $type, $fullname, $email, $organization, $passwor
         tb_members.telephone = '$telephone',
         tb_members.instagram = '$instagram',
         tb_members.facebook = '$facebook',
-        tb_members.website = '{$website}'
+        tb_members.website = '{$website}',
+        tb_members.active = 1
     WHERE 
         tb_users.usernr = '{$usernr}'";
     $res = mysqli_query($conn, $query);

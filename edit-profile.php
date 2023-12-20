@@ -47,13 +47,8 @@ if (isset($_POST['submit'])) {
     // Validate password strength
     if ($password === '') {
         $password = $row["password"];
-        try {
-            $res = update_profile($conn, $type, $fullname, $email, $organization, $password, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $row["usernr"]);
-
-            header("Location: home.php");
-        } catch (\Throwable $th) {
-            throw $th;
-        }
+        $res = update_profile($conn, $type, $fullname, $email, $organization, $password, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $row["usernr"]);
+        header("Location: home.php");
     } else {
         $uppercase = preg_match('@[A-Z]@', $password);
         $lowercase = preg_match('@[a-z]@', $password);
