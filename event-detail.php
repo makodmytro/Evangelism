@@ -109,6 +109,7 @@ include 'inc/nav.php'
                 <h6><?= $detail_event["country"] ?></h6>
                 <h6><?= $detail_event["cellphone"] ?></h6>
                 <hr>
+                <?php if($detail_event['usernr'] != $_SESSION['usernr']) { ?>
                 <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#emailModal">
                     <div class="d-flex justify-content-center">
                         <div>
@@ -117,6 +118,7 @@ include 'inc/nav.php'
                         <div class="d-flex justify-content-center align-items-center">&nbsp;&nbsp;&nbsp;Email</div>
                     </div>
                 </button>
+                <?php } ?>
                 <!-- <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#whatsappModal">
                     <div class="d-flex justify-content-center">
                         <div>
@@ -148,6 +150,7 @@ include 'inc/nav.php'
                         <?php } ?>
                     </div>
                 </button>
+                <?php if($detail_event['usernr'] == $_SESSION['usernr']) { ?>
                 <button type="submit" name="whoiscomming" class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#memberModal">
                     <div class="d-flex justify-content-center">
                         <div>
@@ -156,6 +159,7 @@ include 'inc/nav.php'
                         <div class="d-flex justify-content-center align-items-center">&nbsp;&nbsp;&nbsp;Who is comming</div>
                     </div>
                 </button>
+                <?php } ?>
                 <button class="btn btn-default mx-auto w-75 mt-1 mb-1" onclick="gotoMemberDetail(<?= $detail_event['usernr'] ?>)">
                     <div class="d-flex justify-content-center">
                         <div>
