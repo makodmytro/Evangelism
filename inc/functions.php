@@ -46,6 +46,11 @@ function isUsernrExistsInMembers($conn, $usernr)
     return mysqli_num_rows(mysqli_query($conn, $query)) > 0;
 }
 
+function isUserExistsInMembers($conn, $usernr) {
+    $query = "SELECT * FROM tb_members WHERE usernr='{$usernr}'";
+    return mysqli_fetch_assoc(mysqli_query($conn, $query));
+}
+
 function getUsernrByEmail($conn, $email) {
     $query = "SELECT * FROM tb_users WHERE email='{$email}'";
     return mysqli_query($conn, $query);
@@ -54,7 +59,7 @@ function getUsernrByEmail($conn, $email) {
 function registerUser($conn, $name, $email, $password, $code)
 {
     $password = md5($password);
-    $sql = "INSERT INTO tb_users (email, password, rcode, active, admin) VALUES ('{$email}', '{$password}', '{$code}', '0', '1')";
+    $sql = "INSERT INTO tb_users (email, password, rcode, active, admin) VALUES ('{$email}', '{$password}', '{$code}', '1', '0')";
     $res = mysqli_query($conn, $sql);
     if ($res) {
         $usernr = $conn->insert_id;

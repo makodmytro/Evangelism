@@ -84,45 +84,57 @@ if (isset($_POST["member_send_email"])) {
 }
 
 if (isset($_POST["send_whatsapp"])) {
-    $apiUrl = 'https://api.gupshup.io/sm/api/v1/msg';
-    $apiKey = 'CkNLmwa1x4HL';
-    $requestBody = [
-        'channel' => 'whatsapp',
-        'source' => '381612652757',
-        'destination' => '381612652757',
-        'src.name' => 'DemoApp',
-        'message' => [
-            'type' => 'text',
-            'text' => 'Hi John, how are you?',
-        ],
-    ];
-    $headers = [
-        'Content-Type: application/x-www-form-urlencoded',
-        'apikey: ' . $apiKey,
-    ];
 
-    // Construct the request options
-    $options = [
-        'http' => [
-            'method'  => 'POST',
-            'header'  => implode("\r\n", $headers),
-            'content' => http_build_query(['message' => $requestBody]),
-        ],
-    ];
+    // $username ='491738195613'; //Mobile Phone prefixed with country code so for india it will be 91xxxxxxxx
+    // $password = 'enter here your encrypted password';
 
-    // Create a stream context
-    $context = stream_context_create($options);
+    // $w = new WhatsProt($username, 0, '', true); //Name your application by replacing “WhatsApp Messaging”
+    // $w->connect();
+    // // $w->loginWithPassword($password);
+    // $receiver = '381612652757';
+    // $message = 'hi';
+    // $w->sendMessage($receiver,$message ); // Send Message
+    // $w->pollMessage();
+    // echo 'Message Sent Successfully';
+    // $apiUrl = 'https://api.gupshup.io/sm/api/v1/msg';
+    // $apiKey = 'LWspxFrVd5k3';
+    // $requestBody = [
+    //     'channel' => 'whatsapp',
+    //     'source' => '491738195613',
+    //     'destination' => '381612652757',
+    //     'src.name' => 'DemoApp',
+    //     'message' => [
+    //         'type' => 'text',
+    //         'text' => 'Hi John, how are you?',
+    //     ],
+    // ];
+    // $headers = [
+    //     'Content-Type: application/x-www-form-urlencoded',
+    //     'apikey: ' . $apiKey,
+    // ];
 
-    // Make the POST request
-    $response = file_get_contents($apiUrl, false, $context);
+    // // Construct the request options
+    // $options = [
+    //     'http' => [
+    //         'method'  => 'POST',
+    //         'header'  => implode("\r\n", $headers),
+    //         'content' => http_build_query(['message' => $requestBody]),
+    //     ],
+    // ];
 
-    // Check for errors
-    if ($response === false) {
-        die('Error making POST request');
-    }
+    // // Create a stream context
+    // $context = stream_context_create($options);
 
-    // Process the response data
-    $data = json_decode($response, true);
+    // // Make the POST request
+    // $response = file_get_contents($apiUrl, false, $context);
+
+    // // Check for errors
+    // if ($response === false) {
+    //     die('Error making POST request');
+    // }
+
+    // // Process the response data
+    // $data = json_decode($response, true);
 }
 
 ?>

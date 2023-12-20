@@ -40,15 +40,17 @@
                         $_SESSION['street'] = $uuser['street'];
                         $_SESSION['city'] = $uuser['city'];
                         $_SESSION['country'] = $uuser['country'];
-                        if(isUsernrExistsInMembers($conn, $user['usernr']) && $user["active"] == 1) {
-                            header("Location: home.php");
-                            die();
+                        if(isUserExistsInMembers($conn, $user['usernr'])['zip'] != '') {
+                            if($user['active'] == 1) {
+                                header("Location: home.php");
+                                die();
+                            } else {
+                                $msg = "<div class='alert alert-warning'>User account is deactived</div>";
+                            }
                         } else {
-                        header('Location: register-member.php');
-                        die();
+                            header('Location: register-member.php');
+                            die();
                         }
-                    } else {
-                        $msg = "<div class='alert alert-warning'>User account is deactived</div>";
                     }
                 } else {
                     $msg = "<div class='alert alert-warning'>Something went wrong.</div>";
