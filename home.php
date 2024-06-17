@@ -44,7 +44,7 @@
                     </button>
                 </a>
             </div>
-            <?php if($_SESSION["type"] == "Evangelist,DEUTSCH" || $_SESSION["type"] == "Evangelist,ENGLISH" || $_SESSION["admin"]) {?>
+            <?php if($_SESSION["type"] == "Evangelist") {?>
                 <div class="col-md-4 col-sm-12">
                     <a href="add-convert.php">
                         <button class="btn btn-primary w-100 mt-5 mb-5 h-50">

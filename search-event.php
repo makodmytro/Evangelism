@@ -6,8 +6,6 @@
 include 'inc/country.php';
 if (!isset($_SESSION["SESSION_EMAIL"])) {
     header("Location: index.php");
-} else {
-    header("Location");
 }
 
 $msg = "";

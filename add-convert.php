@@ -29,6 +29,7 @@ if (isset($_POST['submit'])) {
         if (isEmailExists($conn, $email) && $email != "") {
             $msg = "<div class='alert alert-danger'>{$email} - This email address already exists.</div>";
         } else {
+            send_email($conn, $email, 0, 'add-convert', '', '', $siteLanguage);
             $res = addConvert($conn, $email, $fullname, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $_SESSION["usernr"]);
         }
     }
@@ -68,7 +69,7 @@ if (isset($_POST['submit'])) {
                 </div>
                 <div class="col-lg-1 col-md-12"></div>
                 <div class="col-lg-4 col-md-12 border border-1 border-solid px-4 pt-3 pb-3 mb-5 text-break">
-                    <input type="text" class="form-control mt-3" name="email" placeholder="Enter Your Email Address">
+                    <input type="text" class="form-control mt-3" name="email" placeholder="*Enter Your Email Address" required>
                     <?php echo $msg; ?>
                     <div class="form-check mt-5">
                         <input class="form-check-input" type="checkbox" name="policy" value="" id="flexCheckDefault"

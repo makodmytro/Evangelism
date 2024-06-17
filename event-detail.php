@@ -24,6 +24,7 @@ if ($_GET['eventnr']) {
     }
 } else {
     header('Location: search-event.php');
+    exit;
 }
 
 // get event info I created
@@ -55,6 +56,7 @@ if (isset($_POST["addme"])) {
     }
     $res_eventmembers = select_eventMembers($conn, $eventnr);
     header("Location: event-detail.php?eventnr=" . $eventnr);
+    exit;
 }
 
 // removeme action handler
@@ -71,6 +73,7 @@ if (isset($_POST["removeme"])) {
     }
     $res_eventmembers = select_eventMembers($conn, $eventnr);
     header("Location: event-detail.php?eventnr=" . $eventnr);
+    exit;
 }
 
 // get who is comming
@@ -89,6 +92,18 @@ if (isset($_POST["send_email_event"])) {
     send_email($conn, mysqli_fetch_assoc($res)['email'], 0, 'member_send_email', $subject, $content, $siteLanguage);
 }
 
+if (isset($_POST['remove_event'])) {
+    // Validate and/or sanitize the event ID
+    $eventnr = $_GET['eventnr'];
+
+    if (delete_event($conn, $eventnr)) {
+        header('Location: search-event.php');
+        exit;
+    } else {
+        echo "Error: Event could not be deleted.";
+    }
+}
+
 include 'inc/header.php';
 $navTitle = "Search Events";
 include 'inc/nav.php'
@@ -101,110 +116,118 @@ include 'inc/nav.php'
         <div class="map-container">
             <div class="border border-1 border-solid map-content" id="map"></div>
             <div class="member-detail pt-0 pb-3 text-white text-center">
-                <h2 class="mb-0 pt-3"><?= strtoupper($detail_event["type"]) ?></h2>
-                <hr>
-                <h3 class="fst-italic"><?= $detail_event['name'] ?></h3>
-                <h6><?= $detail_event["street"] ?></h6>
-                <h6><?= $detail_event["zip"] ?>,<?= $detail_event["city"] ?></h6>
-                <h6><?= $detail_event["country"] ?></h6>
-                <h6><?= $detail_event["cellphone"] ?></h6>
-                <hr>
-                <?php if($detail_event['usernr'] == $_SESSION['usernr']) { ?>
-                    <button class="btn btn-default mx-auto w-75 mt-1 mb-1" onclick="gotoEditEvent()">
+                <div>
+                    <h2 class="mb-0 pt-3"><?= strtoupper($detail_event["type"]) ?></h2>
+                    <hr>
+                </div>
+                <div>
+                    <h3 class="fst-italic"><?= $detail_event['name'] ?></h3>
+                    <h6><?= $detail_event["street"] ?></h6>
+                    <h6><?= $detail_event["zip"] ?>,<?= $detail_event["city"] ?></h6>
+                    <h6><?= $detail_event["country"] ?></h6>
+                    <h6><?= $detail_event["cellphone"] ?></h6>
+                </div>
+                <div>
+                    <hr>
+                    <?php if($detail_event['usernr'] == $_SESSION['usernr']) { ?>
+                        <button class="btn btn-default mx-auto w-75 mt-1 mb-1" onclick="gotoEditEvent()">
+                            <div class="d-flex justify-content-center">
+                                <div>
+                                    <img src='<?php echo DOMAIN . "/assets/images/events.png"; ?>' alt="" />
+                                </div>
+                                <div class="d-flex justify-content-center align-items-center">&nbsp;&nbsp;&nbsp;Edit Event</div>
+                            </div>
+                        </button>
+                    <?php } ?>
+                    <?php if($detail_event['usernr'] != $_SESSION['usernr']) { ?>
+                    <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#emailModal">
+                        <div class="d-flex justify-content-center">
+                            <div>
+                                <img src='<?php echo DOMAIN . "/assets/images/email.png"; ?>' alt="" />
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center">&nbsp;&nbsp;&nbsp;Email</div>
+                        </div>
+                    </button>
+                    <?php } ?>
+                    <!-- <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#whatsappModal">
+                        <div class="d-flex justify-content-center">
+                            <div>
+                                <img src='<?php echo DOMAIN . "/assets/images/wapp.png"; ?>' alt="" />
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center">&nbsp;&nbsp;&nbsp;Whatsapp</div>
+                        </div>
+                    </button> -->
+                    <button class="btn btn-default mx-auto w-75 mt-1 mb-1" onclick="gotoEvent()">
                         <div class="d-flex justify-content-center">
                             <div>
                                 <img src='<?php echo DOMAIN . "/assets/images/events.png"; ?>' alt="" />
                             </div>
-                            <div class="d-flex justify-content-center align-items-center">&nbsp;&nbsp;&nbsp;Edit Event</div>
+                            <div class="d-flex justify-content-center align-items-center">&nbsp;&nbsp;&nbsp;Events</div>
                         </div>
                     </button>
-                <?php } ?>
-                <?php if($detail_event['usernr'] != $_SESSION['usernr']) { ?>
-                <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#emailModal">
-                    <div class="d-flex justify-content-center">
-                        <div>
-                            <img src='<?php echo DOMAIN . "/assets/images/email.png"; ?>' alt="" />
+                    <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#allowModal">
+                        <div class="d-flex justify-content-center">
+                            <?php if ($addInfo->num_rows > 0) { ?>
+                                <div>
+                                    <img src='<?php echo DOMAIN . "/assets/images/delete.png"; ?>' alt="" />
+                                </div>
+                                <div class="d-flex justify-content-center align-items-center">&nbsp;&nbsp;&nbsp;Remove me</div>
+                            <?php } else { ?>
+                                <div>
+                                    <img src='<?php echo DOMAIN . "/assets/images/active.png"; ?>' alt="" />
+                                </div>
+                                <div class="d-flex justify-content-center align-items-center">&nbsp;&nbsp;&nbsp;Add me</div>
+                            <?php } ?>
                         </div>
-                        <div class="d-flex justify-content-center align-items-center">&nbsp;&nbsp;&nbsp;Email</div>
-                    </div>
-                </button>
-                <?php } ?>
-                <!-- <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#whatsappModal">
-                    <div class="d-flex justify-content-center">
-                        <div>
-                            <img src='<?php echo DOMAIN . "/assets/images/wapp.png"; ?>' alt="" />
-                        </div>
-                        <div class="d-flex justify-content-center align-items-center">&nbsp;&nbsp;&nbsp;Whatsapp</div>
-                    </div>
-                </button> -->
-                <button class="btn btn-default mx-auto w-75 mt-1 mb-1" onclick="gotoEvent()">
-                    <div class="d-flex justify-content-center">
-                        <div>
-                            <img src='<?php echo DOMAIN . "/assets/images/events.png"; ?>' alt="" />
-                        </div>
-                        <div class="d-flex justify-content-center align-items-center">&nbsp;&nbsp;&nbsp;Events</div>
-                    </div>
-                </button>
-                <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#allowModal">
-                    <div class="d-flex justify-content-center">
-                        <?php if ($addInfo->num_rows > 0) { ?>
+                    </button>
+                    <?php if($detail_event['usernr'] == $_SESSION['usernr']) { ?>
+                    <button type="submit" name="whoiscomming" class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#memberModal">
+                        <div class="d-flex justify-content-center">
                             <div>
-                                <img src='<?php echo DOMAIN . "/assets/images/delete.png"; ?>' alt="" />
+                                <img src='<?php echo DOMAIN . "/assets/images/comming.png"; ?>' alt="" />
                             </div>
-                            <div class="d-flex justify-content-center align-items-center">&nbsp;&nbsp;&nbsp;Remove me</div>
-                        <?php } else { ?>
+                            <div class="d-flex justify-content-center align-items-center">&nbsp;&nbsp;&nbsp;Who is comming</div>
+                        </div>
+                    </button>
+                    <?php } ?>
+                    <button class="btn btn-default mx-auto w-75 mt-1 mb-1" onclick="gotoMemberDetail(<?= $detail_event['usernr'] ?>)">
+                        <div class="d-flex justify-content-center">
                             <div>
-                                <img src='<?php echo DOMAIN . "/assets/images/active.png"; ?>' alt="" />
+                                <img src='<?php echo DOMAIN . "/assets/images/member.png"; ?>' alt="" />
                             </div>
-                            <div class="d-flex justify-content-center align-items-center">&nbsp;&nbsp;&nbsp;Add me</div>
+                            <div class="d-flex justify-content-center align-items-center">&nbsp;&nbsp;&nbsp;Details</div>
+                        </div>
+                    </button>
+                    <div class="d-flex justify-content-between w-75 mx-auto">
+                        <?php if ($detail_event["website"]) { ?>
+                            <a href="<?= $detail_event["website"] ?>" target="_blank">
+                                <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
+                                    <img src="assets/images/world.png" alt="" style="width: 30px">
+                                </button>
+                            </a>
+                        <?php } ?>
+                        <?php if ($detail_event["facebook"]) { ?>
+                            <a href="<?= $detail_event["facebook"] ?>" target="_blank">
+                                <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
+                                    <img src="assets/images/facebook.png" alt="" style="width: 30px">
+                                </button>
+                            </a>
+                        <?php } ?>
+                        <?php if ($detail_event["instagram"]) { ?>
+                            <a href="<?= $detail_event["instagram"] ?>" target="_blank">
+                                <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
+                                    <img src="assets/images/instagram.png" alt="" style="width: 30px">
+                                </button>
+                            </a>
+                        <?php } ?>
+                        <?php if ($_SESSION["admin"]) { ?>
+                            <form action="" method="POST">
+                                <button name="remove_event" type="submit" class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
+                                    <img src="assets/images/delete.png" alt="" style="width: 30px">
+                                </button>
+                            </form>
                         <?php } ?>
                     </div>
-                </button>
-                <?php if($detail_event['usernr'] == $_SESSION['usernr']) { ?>
-                <button type="submit" name="whoiscomming" class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#memberModal">
-                    <div class="d-flex justify-content-center">
-                        <div>
-                            <img src='<?php echo DOMAIN . "/assets/images/comming.png"; ?>' alt="" />
-                        </div>
-                        <div class="d-flex justify-content-center align-items-center">&nbsp;&nbsp;&nbsp;Who is comming</div>
-                    </div>
-                </button>
-                <?php } ?>
-                <button class="btn btn-default mx-auto w-75 mt-1 mb-1" onclick="gotoMemberDetail(<?= $detail_event['usernr'] ?>)">
-                    <div class="d-flex justify-content-center">
-                        <div>
-                            <img src='<?php echo DOMAIN . "/assets/images/member.png"; ?>' alt="" />
-                        </div>
-                        <div class="d-flex justify-content-center align-items-center">&nbsp;&nbsp;&nbsp;Details</div>
-                    </div>
-                </button>
-                <div class="d-flex justify-content-between w-75 mx-auto">
-                    <?php if ($detail_event["website"]) { ?>
-                        <a href="<?= $detail_event["website"] ?>" target="_blank">
-                            <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
-                                <img src="assets/images/world.png" alt="" style="width: 30px">
-                            </button>
-                        </a>
-                    <?php } ?>
-                    <?php if ($detail_event["facebook"]) { ?>
-                        <a href="<?= $detail_event["facebook"] ?>" target="_blank">
-                            <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
-                                <img src="assets/images/facebook.png" alt="" style="width: 30px">
-                            </button>
-                        </a>
-                    <?php } ?>
-                    <?php if ($detail_event["instagram"]) { ?>
-                        <a href="<?= $detail_event["instagram"] ?>" target="_blank">
-                            <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
-                                <img src="assets/images/instagram.png" alt="" style="width: 30px">
-                            </button>
-                        </a>
-                    <?php } ?>
-                    <?php if ($_SESSION["admin"]) { ?>
-                        <button class="btn btn-default ps-3 pe-3 mt-1 mb-1" style="width: fit-content">
-                            <img src="assets/images/delete.png" alt="" style="width: 30px">
-                        </button>
-                    <?php } ?>
                 </div>
             </div>
         </div>

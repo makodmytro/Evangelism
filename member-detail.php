@@ -147,28 +147,32 @@ if (isset($_POST["send_whatsapp"])) {
         <div class="map-container">
             <div class="border border-1 border-solid map-content" id="map"></div>
             <div class="member-detail pt-0 pb-3 text-white text-center">
-                <h2 class="mb-0 pt-3">Church</h2>
-                <hr>
-                <h3>
-                    <?= $e_user['fullname'] ?>
-                </h3>
-                <h3 class="fst-italic">Jesus Church</h3>
-                <h6>
-                    <?= $e_user['street'] ?>
-                </h6>
-                <h6>
-                    <?= $e_user['zip'] ?>,
-                    <?= $e_user['city'] ?>
-                </h6>
-                <h6>
-                    <?= strtoupper($e_user['country']) ?>
-                </h6>
-                <h6>
-                    <?= $e_user['cellphone'] ?>
-                </h6>
-                <h6>
-                    <?= $e_user['telephone'] ?>
-                </h6>
+                <div>
+                    <h2 class="mb-0 pt-3">Church</h2>
+                    <hr>
+                </div>
+                <div>
+                    <h3>
+                        <?= $e_user['fullname'] ?>
+                    </h3>
+                    <h3 class="fst-italic">Jesus Church</h3>
+                    <h6>
+                        <?= $e_user['street'] ?>
+                    </h6>
+                    <h6>
+                        <?= $e_user['zip'] ?>,
+                        <?= $e_user['city'] ?>
+                    </h6>
+                    <h6>
+                        <?= strtoupper($e_user['country']) ?>
+                    </h6>
+                    <h6>
+                        <?= $e_user['cellphone'] ?>
+                    </h6>
+                    <h6>
+                        <?= $e_user['telephone'] ?>
+                    </h6>
+                </div>
                 <hr>
                 <?php if ($e_user['usernr'] != $_SESSION['usernr']) { ?>
                     <button class="btn btn-default mx-auto w-75 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#emailModal">

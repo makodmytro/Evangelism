@@ -32,56 +32,36 @@ if (isset($_POST['register'])) {
     $instagram = mysqli_real_escape_string($conn, $_POST['instagram']);
     $facebook = mysqli_real_escape_string($conn, $_POST['facebook']);
     $website = mysqli_real_escape_string($conn, $_POST['website']);
-    $password = mysqli_real_escape_string($conn, $_POST['password']);
-    $confirm_password = mysqli_real_escape_string($conn, $_POST['confirm_password']);
+    $whatsappcode = mysqli_real_escape_string($conn, $_POST['whatsappcode']);
 
     $msg = '';
 
       // Validate password strength
-    if($password === ''){
-        $password = $row["password"];
+    $uppercase = preg_match('@[A-Z]@', $password);
+    $lowercase = preg_match('@[a-z]@', $password);
+    $number = preg_match('@[0-9]@', $password);
+    $specialChars = preg_match('@[^\w]@', $password);
+
+    if (isEmailExists($conn, $email)) {
+        if($email !== $row["email"]) {
+            $msg = "<div class='alert alert-danger'>{$email} - This email address already exists.</div>";
+        } else {
+            $msg = "";
+            try {
+                $res = update_profile($conn, $type, $fullname, $email, $organization, '', $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $whatsappcode, $row["usernr"]);
+                
+                header("Location: home.php");
+            } catch (\Throwable $th) {
+                throw $th;
+            }
+        }
+    } else {
         try {
-            $res = update_profile($conn, $type, $fullname, $email, $organization, $password, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $row["usernr"]);
+            $res = update_profile($conn, $type, $fullname, $email, $organization, '', $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $whatsappcode, $row["usernr"]);
             
             header("Location: home.php");
         } catch (\Throwable $th) {
             throw $th;
-        }
-    } else {
-        $uppercase = preg_match('@[A-Z]@', $password);
-        $lowercase = preg_match('@[a-z]@', $password);
-        $number = preg_match('@[0-9]@', $password);
-        $specialChars = preg_match('@[^\w]@', $password);
-    
-        if (!$uppercase || !$lowercase || !$number || !$specialChars || strlen($password) < 8) {
-            $msg = "<div class='alert alert-danger'>Password should be at least 8 characters in length and should include at least one upper case letter, one number, and one special character.</div>";
-        } else {
-            if (isEmailExists($conn, $email)) {
-                if($email !== $row["email"]) {
-                    $msg = "<div class='alert alert-danger'>{$email} - This email address already exists.</div>";
-                } else {
-                    $msg = "";
-                    try {
-                        $res = update_profile($conn, $type, $fullname, $email, $organization, $password, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $row["usernr"]);
-                        
-                        header("Location: home.php");
-                    } catch (\Throwable $th) {
-                        throw $th;
-                    }
-                }
-            } else {
-                if ($password === $confirm_password) {
-                    try {
-                        $res = update_profile($conn, $type, $fullname, $email, $organization, $password, $street, $zip, $city, $country, $cellphone, $telephone, $instagram, $facebook, $website, $row["usernr"]);
-                        
-                        header("Location: home.php");
-                    } catch (\Throwable $th) {
-                        throw $th;
-                    }
-                } else {
-                    $msg = "<div class='alert alert-danger'>Password and Confirm Password do not match</div>";
-                }
-            }
         }
     }
 
@@ -114,6 +94,7 @@ include 'inc/nav.php';
                         <?php } ?>
                     </select>
                     <input type="text" class="form-control mt-3" name="cellphone" placeholder="Enter Your Cellphone" value="<?= $row["cellphone"] ?>">
+                    <input type="text" class="form-control mt-3" name="whatsappcode" placeholder="Enter Your Whatsapp Code" value="<?= $row["whatsappcode"] ?>">
                     <input type="text" class="form-control mt-3" name="website" placeholder="Enter Your Website" value="<?= $row["website"] ?>">
                     <input type="text" class="form-control mt-3" name="telephone" placeholder="Enter Your Telephone" value="<?= $row["telephone"] ?>">
                     <input type="text" class="form-control mt-3" name="instagram" placeholder="Enter Your Instagram" value="<?= $row["instagram"] ?>">
@@ -129,9 +110,6 @@ include 'inc/nav.php';
                     <input type="text" class="form-control mt-3" name="fullname" placeholder="Enter Your Full Name" value="<?= $row["fullname"] ?>">
                     <input type="text" class="form-control mt-3" name="email" placeholder="Enter Your Email Address" value="<?= $row["email"] ?>">
                     <input type="text" class="form-control mt-3" name="organization" placeholder="Enter Your Organization" value="<?= $row["organization"] ?>">
-                    <input type="password" class="form-control mt-3" name="password" placeholder="Enter Your Password">
-                    <input type="password" class="form-control mt-3" name="confirm_password"
-                        placeholder="Enter Your Retype Password">
                     <button name="register" class="btn btn-primary mt-5 w-100" type="submit">Save Data</button>
                 </div>
             </div>

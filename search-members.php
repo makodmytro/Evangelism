@@ -6,6 +6,7 @@
 include 'inc/country.php';
 if (!isset($_SESSION["SESSION_EMAIL"])) {
     header("Location: index.php");
+    exit;
 }
 $msg = "";
 $s_fullname = "      ";
@@ -26,7 +27,7 @@ $s_country = "";
 $s_connected = 0;
 
 try {
-    $res = select_members($conn, $s_type, $s_fullname, $s_organization, $s_zip, $s_city, $s_country);
+    $res = select_members($conn, $s_type, $s_fullname, $s_organization, $s_zip, $s_city, $s_country, $_SESSION["admin"]);
 } catch (\Throwable $th) {
     $msg = "<div class='alert alert-class'>{$th->getMessage()}</div>";
 }
@@ -43,7 +44,7 @@ if (isset($_POST['submit'])) {
         $res = select_membersToMe($conn, $s_type, $s_fullname, $s_organization, $s_zip, $s_city, $s_country);
         $s_connected = 1;
     } else {
-        $res = select_members($conn, $s_type, $s_fullname, $s_organization, $s_zip, $s_city, $s_country);
+        $res = select_members($conn, $s_type, $s_fullname, $s_organization, $s_zip, $s_city, $s_country, $_SESSION["admin"]);
         $s_connected = 0;
     }
 }
@@ -122,7 +123,7 @@ if (isset($_POST['submit'])) {
                                     <select type="text" class="form-control mt-3" name="type" style="padding: 12px">
                                         <option value="" selected disabled>User Type</option>
                                         <?php while ($row1 = $types->fetch_assoc()) { ?>
-                                            <option value="church">
+                                            <option value="<?= $row1["descript"] ?>">
                                                 <?= $row1["descript"] ?>
                                             </option>
                                         <?php } ?>
